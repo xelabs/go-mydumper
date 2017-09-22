@@ -7,7 +7,7 @@
  *
  */
 
-package mydumper
+package main
 
 import (
 	"common"
