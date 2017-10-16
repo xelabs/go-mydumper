@@ -80,7 +80,7 @@ func restoreTableSchema(log *xlog.Log, conn *Connection, schemas []string) {
 	for _, schema := range schemas {
 		// use
 		base := filepath.Base(schema)
-		name := strings.Trim(base, schemaSuffix)
+		name := strings.TrimSuffix(base, schemaSuffix)
 		db := strings.Split(name, ".")[0]
 		sql := fmt.Sprintf("use `%s`", db)
 		err := conn.Execute(sql)
@@ -104,7 +104,7 @@ func restoreTable(log *xlog.Log, conn *Connection, table string) int {
 	bytes := 0
 	part := "0"
 	base := filepath.Base(table)
-	name := strings.Trim(base, tableSuffix)
+	name := strings.TrimSuffix(base, tableSuffix)
 	splits := strings.Split(name, ".")
 	db := splits[0]
 	tbl := splits[1]
