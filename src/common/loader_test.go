@@ -28,19 +28,21 @@ func TestLoader(t *testing.T) {
 
 	// fakedbs.
 	{
-		fakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
 		fakedbs.AddQuery("create database if not exists `test`", &sqltypes.Result{})
 		fakedbs.AddQuery("create table `t1` (`a` int(11) default null,`b` varchar(100) default null) engine=innodb", &sqltypes.Result{})
+		fakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("insert into .*", &sqltypes.Result{})
+		fakedbs.AddQueryPattern("drop table .*", &sqltypes.Result{})
 	}
 
 	args := &Args{
-		Outdir:     "/tmp/dumpertest",
-		User:       "mock",
-		Password:   "mock",
-		Threads:    16,
-		Address:    address,
-		IntervalMs: 500,
+		Outdir:          "/tmp/dumpertest",
+		User:            "mock",
+		Password:        "mock",
+		Threads:         16,
+		Address:         address,
+		IntervalMs:      500,
+		OverwriteTables: true,
 	}
 	// Loader.
 	{

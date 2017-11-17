@@ -61,7 +61,7 @@ func loadFiles(log *xlog.Log, dir string) *Files {
 	return files
 }
 
-func restoreDatabaseSchema(log *xlog.Log, conn *Connection, dbs []string) {
+func restoreDatabaseSchema(log *xlog.Log, dbs []string, conn *Connection) {
 	for _, db := range dbs {
 		base := filepath.Base(db)
 		name := strings.TrimSuffix(base, dbSuffix)
@@ -76,22 +76,27 @@ func restoreDatabaseSchema(log *xlog.Log, conn *Connection, dbs []string) {
 	}
 }
 
-func restoreTableSchema(log *xlog.Log, conn *Connection, schemas []string) {
-	for _, schema := range schemas {
+func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Connection) {
+	for _, table := range tables {
 		// use
-		base := filepath.Base(schema)
+		base := filepath.Base(table)
 		name := strings.TrimSuffix(base, schemaSuffix)
 		db := strings.Split(name, ".")[0]
-		sql := fmt.Sprintf("use `%s`", db)
-		err := conn.Execute(sql)
+
+		err := conn.Execute(fmt.Sprintf("USE `%s`", db))
 		AssertNil(err)
 
-		data, err := ReadFile(schema)
+		data, err := ReadFile(table)
 		AssertNil(err)
-		sql = common.BytesToString(data)
-		querys := strings.Split(sql, ";\n")
+		query1 := common.BytesToString(data)
+		querys := strings.Split(query1, ";\n")
 		for _, query := range querys {
 			if !strings.HasPrefix(query, "/*") && query != "" {
+				if overwrite {
+					dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`.`%s`", db, name)
+					err = conn.Execute(dropQuery)
+					AssertNil(err)
+				}
 				err = conn.Execute(query)
 				AssertNil(err)
 			}
@@ -100,7 +105,7 @@ func restoreTableSchema(log *xlog.Log, conn *Connection, schemas []string) {
 	}
 }
 
-func restoreTable(log *xlog.Log, conn *Connection, table string) int {
+func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 	bytes := 0
 	part := "0"
 	base := filepath.Base(table)
@@ -113,15 +118,14 @@ func restoreTable(log *xlog.Log, conn *Connection, table string) int {
 	}
 
 	log.Info("restoring.tables[%s].parts[%s].thread[%d]", tbl, part, conn.ID)
-	sql := fmt.Sprintf("use `%s`", db)
-	err := conn.Execute(sql)
+	err := conn.Execute(fmt.Sprintf("USE `%s`", db))
 	AssertNil(err)
 
 	data, err := ReadFile(table)
 	AssertNil(err)
-	sql = common.BytesToString(data)
-	querys := strings.Split(sql, ";\n")
-	bytes = len(sql)
+	query1 := common.BytesToString(data)
+	querys := strings.Split(query1, ";\n")
+	bytes = len(query1)
 	for _, query := range querys {
 		if !strings.HasPrefix(query, "/*") && query != "" {
 			err = conn.Execute(query)
@@ -141,12 +145,12 @@ func Loader(log *xlog.Log, args *Args) {
 
 	// database.
 	conn := pool.Get()
-	restoreDatabaseSchema(log, conn, files.databases)
+	restoreDatabaseSchema(log, files.databases, conn)
 	pool.Put(conn)
 
 	// tables.
 	conn = pool.Get()
-	restoreTableSchema(log, conn, files.schemas)
+	restoreTableSchema(log, args.OverwriteTables, files.schemas, conn)
 	pool.Put(conn)
 
 	// Shuffle the tables
@@ -166,7 +170,7 @@ func Loader(log *xlog.Log, args *Args) {
 				wg.Done()
 				pool.Put(conn)
 			}()
-			r := restoreTable(log, conn, table)
+			r := restoreTable(log, table, conn)
 			atomic.AddUint64(&bytes, uint64(r))
 		}(conn, table)
 	}

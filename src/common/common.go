@@ -18,18 +18,21 @@ import (
 )
 
 type Args struct {
-	User          string
-	Password      string
-	Address       string
-	Database      string
-	Table         string
-	Outdir        string
-	Threads       int
-	ChunksizeInMB int
-	StmtSize      int
-
-	Allbytes uint64
-	Allrows  uint64
+	User            string
+	Password        string
+	Address         string
+	ToUser          string
+	ToPassword      string
+	ToAddress       string
+	Database        string
+	Table           string
+	Outdir          string
+	Threads         int
+	ChunksizeInMB   int
+	StmtSize        int
+	Allbytes        uint64
+	Allrows         uint64
+	OverwriteTables bool
 
 	// Interval in millisecond.
 	IntervalMs int

@@ -26,17 +26,17 @@ func writeMetaData(args *Args) {
 }
 
 func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *Args) {
-	err := conn.Execute(fmt.Sprintf("use `%s`", args.Database))
+	err := conn.Execute(fmt.Sprintf("USE `%s`", args.Database))
 	AssertNil(err)
 
-	schema := fmt.Sprintf("create database if not exists `%s`;", args.Database)
+	schema := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`;", args.Database)
 	file := fmt.Sprintf("%s/%s-schema-create.sql", args.Outdir, args.Database)
 	WriteFile(file, schema)
 	log.Info("dumping.database[%s].schema...", args.Database)
 }
 
 func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, table string) {
-	qr, err := conn.Fetch(fmt.Sprintf("show create table `%s`.`%s`", args.Database, table))
+	qr, err := conn.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", args.Database, table))
 	AssertNil(err)
 	schema := qr.Rows[0][1].String() + ";\n"
 
@@ -46,9 +46,10 @@ func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, table string) 
 }
 
 func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
-	var allBytes, allRows uint64
+	var allBytes uint64
+	var allRows uint64
 
-	cursor, err := conn.StreamFetch(fmt.Sprintf("select /*backup*/ * from `%s`.`%s`", args.Database, table))
+	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT /*backup*/ * FROM `%s`.`%s`", args.Database, table))
 	AssertNil(err)
 
 	fields := make([]string, 0, 16)
@@ -58,8 +59,8 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 	}
 
 	fileNo := 1
-	chunkbytes := 0
 	stmtsize := 0
+	chunkbytes := 0
 	rows := make([]string, 0, 256)
 	inserts := make([]string, 0, 256)
 	for cursor.Next() {
@@ -84,8 +85,8 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 		rows = append(rows, r)
 
 		allRows++
-		chunkbytes += len(r)
 		stmtsize += len(r)
+		chunkbytes += len(r)
 		allBytes += uint64(len(r))
 		atomic.AddUint64(&args.Allbytes, uint64(len(r)))
 		atomic.AddUint64(&args.Allrows, 1)
@@ -123,7 +124,7 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 }
 
 func allTables(log *xlog.Log, conn *Connection, args *Args) []string {
-	qr, err := conn.Fetch(fmt.Sprintf("show tables from `%s`", args.Database))
+	qr, err := conn.Fetch(fmt.Sprintf("SHOW TABLES FROM `%s`", args.Database))
 	AssertNil(err)
 
 	tables := make([]string, 0, 128)
@@ -144,7 +145,6 @@ func Dumper(log *xlog.Log, args *Args) {
 	// database.
 	conn := pool.Get()
 	dumpDatabaseSchema(log, conn, args)
-	pool.Put(conn)
 
 	// tables.
 	var wg sync.WaitGroup
@@ -155,6 +155,8 @@ func Dumper(log *xlog.Log, args *Args) {
 	} else {
 		tables = allTables(log, conn, args)
 	}
+	pool.Put(conn)
+
 	for _, table := range tables {
 		conn := pool.Get()
 		dumpTableSchema(log, conn, args, table)

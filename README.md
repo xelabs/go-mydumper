@@ -13,6 +13,7 @@ $cd go-mydumper
 $make
 $./bin/mydumper --help
 $./bin/myloader --help
+$./bin/mystreamer --help
 ```
 
 ## Test

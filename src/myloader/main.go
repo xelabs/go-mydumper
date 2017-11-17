@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	flag_overwrite_tables                       bool
 	flag_port, flag_threads                     int
 	flag_user, flag_passwd, flag_host, flag_dir string
 
@@ -32,10 +33,11 @@ func init() {
 	flag.IntVar(&flag_port, "P", 3306, "TCP/IP port to connect to")
 	flag.StringVar(&flag_dir, "d", "", "Directory of the dump to import")
 	flag.IntVar(&flag_threads, "t", 16, "Number of threads to use")
+	flag.BoolVar(&flag_overwrite_tables, "o", false, "Drop tables if they already exist")
 }
 
 func usage() {
-	fmt.Println("Usage: " + os.Args[0] + " -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -d  [DIR]")
+	fmt.Println("Usage: " + os.Args[0] + " -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -d [DIR] [-o]")
 	flag.PrintDefaults()
 }
 
@@ -49,12 +51,13 @@ func main() {
 	}
 
 	args := &common.Args{
-		User:       flag_user,
-		Password:   flag_passwd,
-		Address:    fmt.Sprintf("%s:%d", flag_host, flag_port),
-		Outdir:     flag_dir,
-		Threads:    flag_threads,
-		IntervalMs: 10 * 1000,
+		User:            flag_user,
+		Password:        flag_passwd,
+		Address:         fmt.Sprintf("%s:%d", flag_host, flag_port),
+		Outdir:          flag_dir,
+		Threads:         flag_threads,
+		IntervalMs:      10 * 1000,
+		OverwriteTables: flag_overwrite_tables,
 	}
 	common.Loader(log, args)
 }
