@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/XeLabs/go-mydumper.png)](https://travis-ci.org/XeLabs/go-mydumper) [![codecov.io](https://codecov.io/gh/XeLabs/go-mydumper/graphs/badge.svg)](https://codecov.io/gh/XeLabs/go-mydumper/branch/master)
+[![Build Status](https://travis-ci.org/XeLabs/go-mydumper.png)](https://travis-ci.org/XeLabs/go-mydumper) [![Go Report Card](https://goreportcard.com/badge/github.com/XeLabs/go-mydumper)](https://goreportcard.com/report/github.com/XeLabs/go-mydumper) [![codecov.io](https://codecov.io/gh/XeLabs/go-mydumper/graphs/badge.svg)](https://codecov.io/gh/XeLabs/go-mydumper/branch/master)
 
 # go-mydumper
 

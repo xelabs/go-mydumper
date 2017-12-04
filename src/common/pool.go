@@ -18,29 +18,35 @@ import (
 	"github.com/XeLabs/go-mysqlstack/sqlparser/depends/sqltypes"
 )
 
+// Pool tuple.
 type Pool struct {
 	mu    sync.RWMutex
 	log   *xlog.Log
 	conns chan *Connection
 }
 
+// Connection tuple.
 type Connection struct {
 	ID     int
 	client driver.Conn
 }
 
+// Execute used to executes the query.
 func (conn *Connection) Execute(query string) error {
 	return conn.client.Exec(query)
 }
 
+// Fetch used to fetch the results.
 func (conn *Connection) Fetch(query string) (*sqltypes.Result, error) {
 	return conn.client.FetchAll(query, -1)
 }
 
+// StreamFetch used to the results with streaming.
 func (conn *Connection) StreamFetch(query string) (driver.Rows, error) {
 	return conn.client.Query(query)
 }
 
+// NewPool creates the new pool.
 func NewPool(log *xlog.Log, cap int, address string, user string, password string) (*Pool, error) {
 	conns := make(chan *Connection, cap)
 	for i := 0; i < cap; i++ {
@@ -57,6 +63,7 @@ func NewPool(log *xlog.Log, cap int, address string, user string, password strin
 	}, nil
 }
 
+// Get used to get one connection from the pool.
 func (p *Pool) Get() *Connection {
 	conns := p.getConns()
 	if conns == nil {
@@ -66,6 +73,7 @@ func (p *Pool) Get() *Connection {
 	return conn
 }
 
+// Put used to put one connection to the pool.
 func (p *Pool) Put(conn *Connection) {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
@@ -76,6 +84,7 @@ func (p *Pool) Put(conn *Connection) {
 	p.conns <- conn
 }
 
+// Close used to close the pool and the connections.
 func (p *Pool) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()

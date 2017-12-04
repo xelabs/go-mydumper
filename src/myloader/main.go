@@ -19,21 +19,21 @@ import (
 )
 
 var (
-	flag_overwrite_tables                       bool
-	flag_port, flag_threads                     int
-	flag_user, flag_passwd, flag_host, flag_dir string
+	flagOverwriteTables                     bool
+	flagPort, flagThreads                   int
+	flagUser, flagPasswd, flagHost, flagDir string
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
 
 func init() {
-	flag.StringVar(&flag_user, "u", "", "Username with privileges to run the loader")
-	flag.StringVar(&flag_passwd, "p", "", "User password")
-	flag.StringVar(&flag_host, "h", "", "The host to connect to")
-	flag.IntVar(&flag_port, "P", 3306, "TCP/IP port to connect to")
-	flag.StringVar(&flag_dir, "d", "", "Directory of the dump to import")
-	flag.IntVar(&flag_threads, "t", 16, "Number of threads to use")
-	flag.BoolVar(&flag_overwrite_tables, "o", false, "Drop tables if they already exist")
+	flag.StringVar(&flagUser, "u", "", "Username with privileges to run the loader")
+	flag.StringVar(&flagPasswd, "p", "", "User password")
+	flag.StringVar(&flagHost, "h", "", "The host to connect to")
+	flag.IntVar(&flagPort, "P", 3306, "TCP/IP port to connect to")
+	flag.StringVar(&flagDir, "d", "", "Directory of the dump to import")
+	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
+	flag.BoolVar(&flagOverwriteTables, "o", false, "Drop tables if they already exist")
 }
 
 func usage() {
@@ -45,19 +45,19 @@ func main() {
 	flag.Usage = func() { usage() }
 	flag.Parse()
 
-	if flag_host == "" || flag_user == "" || flag_passwd == "" || flag_dir == "" {
+	if flagHost == "" || flagUser == "" || flagPasswd == "" || flagDir == "" {
 		usage()
 		os.Exit(0)
 	}
 
 	args := &common.Args{
-		User:            flag_user,
-		Password:        flag_passwd,
-		Address:         fmt.Sprintf("%s:%d", flag_host, flag_port),
-		Outdir:          flag_dir,
-		Threads:         flag_threads,
+		User:            flagUser,
+		Password:        flagPasswd,
+		Address:         fmt.Sprintf("%s:%d", flagHost, flagPort),
+		Outdir:          flagDir,
+		Threads:         flagThreads,
 		IntervalMs:      10 * 1000,
-		OverwriteTables: flag_overwrite_tables,
+		OverwriteTables: flagOverwriteTables,
 	}
 	common.Loader(log, args)
 }

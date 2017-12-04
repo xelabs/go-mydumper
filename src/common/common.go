@@ -17,6 +17,7 @@ import (
 	"github.com/XeLabs/go-mysqlstack/common"
 )
 
+// Args tuple.
 type Args struct {
 	User            string
 	Password        string
@@ -38,6 +39,7 @@ type Args struct {
 	IntervalMs int
 }
 
+// WriteFile used to write datas to file.
 func WriteFile(file string, data string) error {
 	flag := os.O_RDWR | os.O_TRUNC
 	if _, err := os.Stat(file); os.IsNotExist(err) {
@@ -59,16 +61,19 @@ func WriteFile(file string, data string) error {
 	return nil
 }
 
+// ReadFile used to read datas from file.
 func ReadFile(file string) ([]byte, error) {
 	return ioutil.ReadFile(file)
 }
 
+// AssertNil used to assert the error.
 func AssertNil(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// EscapeBytes used to escape the literal byte.
 func EscapeBytes(bytes []byte) []byte {
 	buffer := common.NewBuffer(128)
 	for _, b := range bytes {

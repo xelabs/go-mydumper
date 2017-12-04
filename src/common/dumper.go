@@ -134,6 +134,7 @@ func allTables(log *xlog.Log, conn *Connection, args *Args) []string {
 	return tables
 }
 
+// Dumper used to start the dumper worker.
 func Dumper(log *xlog.Log, args *Args) {
 	pool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password)
 	AssertNil(err)

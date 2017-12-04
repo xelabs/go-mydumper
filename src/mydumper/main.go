@@ -19,23 +19,23 @@ import (
 )
 
 var (
-	flag_chunksize, flag_threads, flag_port, flag_stmt_size          int
-	flag_user, flag_passwd, flag_host, flag_db, flag_table, flag_dir string
+	flagChunksize, flagThreads, flagPort, flagStmtSize         int
+	flagUser, flagPasswd, flagHost, flagDb, flagTable, flagDir string
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
 
 func init() {
-	flag.StringVar(&flag_user, "u", "", "Username with privileges to run the dump")
-	flag.StringVar(&flag_passwd, "p", "", "User password")
-	flag.StringVar(&flag_host, "h", "", "The host to connect to")
-	flag.IntVar(&flag_port, "P", 3306, "TCP/IP port to connect to")
-	flag.StringVar(&flag_db, "db", "", "Database to dump")
-	flag.StringVar(&flag_table, "table", "", "Table to dump")
-	flag.StringVar(&flag_dir, "o", "", "Directory to output files to")
-	flag.IntVar(&flag_chunksize, "F", 128, "Split tables into chunks of this output file size. This value is in MB")
-	flag.IntVar(&flag_threads, "t", 16, "Number of threads to use")
-	flag.IntVar(&flag_stmt_size, "s", 1000000, "Attempted size of INSERT statement in bytes")
+	flag.StringVar(&flagUser, "u", "", "Username with privileges to run the dump")
+	flag.StringVar(&flagPasswd, "p", "", "User password")
+	flag.StringVar(&flagHost, "h", "", "The host to connect to")
+	flag.IntVar(&flagPort, "P", 3306, "TCP/IP port to connect to")
+	flag.StringVar(&flagDb, "db", "", "Database to dump")
+	flag.StringVar(&flagTable, "table", "", "Table to dump")
+	flag.StringVar(&flagDir, "o", "", "Directory to output files to")
+	flag.IntVar(&flagChunksize, "F", 128, "Split tables into chunks of this output file size. This value is in MB")
+	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
+	flag.IntVar(&flagStmtSize, "s", 1000000, "Attempted size of INSERT statement in bytes")
 }
 
 func usage() {
@@ -47,26 +47,26 @@ func main() {
 	flag.Usage = func() { usage() }
 	flag.Parse()
 
-	if flag_host == "" || flag_user == "" || flag_passwd == "" || flag_db == "" {
+	if flagHost == "" || flagUser == "" || flagPasswd == "" || flagDb == "" {
 		usage()
 		os.Exit(0)
 	}
 
-	if _, err := os.Stat(flag_dir); os.IsNotExist(err) {
-		x := os.MkdirAll(flag_dir, 0777)
+	if _, err := os.Stat(flagDir); os.IsNotExist(err) {
+		x := os.MkdirAll(flagDir, 0777)
 		common.AssertNil(x)
 	}
 
 	args := &common.Args{
-		User:          flag_user,
-		Password:      flag_passwd,
-		Address:       fmt.Sprintf("%s:%d", flag_host, flag_port),
-		Database:      flag_db,
-		Table:         flag_table,
-		Outdir:        flag_dir,
-		ChunksizeInMB: flag_chunksize,
-		Threads:       flag_threads,
-		StmtSize:      flag_stmt_size,
+		User:          flagUser,
+		Password:      flagPasswd,
+		Address:       fmt.Sprintf("%s:%d", flagHost, flagPort),
+		Database:      flagDb,
+		Table:         flagTable,
+		Outdir:        flagDir,
+		ChunksizeInMB: flagChunksize,
+		Threads:       flagThreads,
+		StmtSize:      flagStmtSize,
 		IntervalMs:    10 * 1000,
 	}
 

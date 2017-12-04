@@ -67,7 +67,6 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 	AssertNil(err)
 
 	stmtsize := 0
-	chunkbytes := 0
 	rows := make([]string, 0, 256)
 	for cursor.Next() {
 		row, err := cursor.RowValues()
@@ -92,7 +91,6 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 
 		allRows++
 		stmtsize += len(r)
-		chunkbytes += len(r)
 		allBytes += uint64(len(r))
 		atomic.AddUint64(&args.Allbytes, uint64(len(r)))
 		atomic.AddUint64(&args.Allrows, 1)
@@ -111,9 +109,6 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 		query := fmt.Sprintf("INSERT INTO `%s`(%s) VALUES\n%s", tbl, strings.Join(fields, ","), strings.Join(rows, ",\n"))
 		err = to.Execute(query)
 		AssertNil(err)
-
-		rows = rows[:0]
-		stmtsize = 0
 	}
 
 	err = cursor.Close()
@@ -121,6 +116,7 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 	log.Info("streaming.table[%s.%s].done.allrows[%v].allbytes[%vMB].thread[%d]...", db, tbl, allRows, (allBytes / 1024 / 1024), from.ID)
 }
 
+// Streamer used to start the streamer worker.
 func Streamer(log *xlog.Log, args *Args) {
 	var tables []string
 	var wg sync.WaitGroup

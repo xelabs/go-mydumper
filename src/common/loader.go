@@ -23,6 +23,7 @@ import (
 	"github.com/XeLabs/go-mysqlstack/xlog"
 )
 
+// Files tuple.
 type Files struct {
 	databases []string
 	schemas   []string
@@ -136,6 +137,7 @@ func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 	return bytes
 }
 
+// Loader used to start the loader worker.
 func Loader(log *xlog.Log, args *Args) {
 	pool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password)
 	AssertNil(err)
