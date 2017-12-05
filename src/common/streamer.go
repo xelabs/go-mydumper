@@ -20,14 +20,14 @@ import (
 	"github.com/XeLabs/go-mysqlstack/xlog"
 )
 
-func streamDatabaseSchema(log *xlog.Log, db string, from *Connection, to *Connection) {
+func streamDatabaseSchema(log *xlog.Log, db string, todb string, from *Connection, to *Connection) {
 	err := from.Execute(fmt.Sprintf("USE `%s`", db))
 	AssertNil(err)
 
-	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`;", db)
+	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`;", todb)
 	err = to.Execute(query)
 	AssertNil(err)
-	log.Info("streaming.database[%s].schema...", db)
+	log.Info("streaming.database[%s].schema...", todb)
 }
 
 func streamTableSchema(log *xlog.Log, db string, todb string, tbl string, overwrite bool, from *Connection, to *Connection) {
@@ -137,7 +137,7 @@ func Streamer(log *xlog.Log, args *Args) {
 
 	from := fromPool.Get()
 	to := toPool.Get()
-	streamDatabaseSchema(log, db, from, to)
+	streamDatabaseSchema(log, db, todb, from, to)
 
 	// tables.
 	t := time.Now()
