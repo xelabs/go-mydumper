@@ -111,35 +111,58 @@ func TestStreamer(t *testing.T) {
 
 	// fakedbs.
 	{
-		fromFakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
-		fromFakedbs.AddQueryPattern("show create table .*", schemaResult)
-		fromFakedbs.AddQueryPattern("show tables from .*", tablesResult)
-		fromFakedbs.AddQueryPattern("select .*", selectResult)
+		fromFakedbs.AddQueryPattern("USE `test`", &sqltypes.Result{})
+		fromFakedbs.AddQueryPattern("SHOW CREATE TABLE `test`..*", schemaResult)
+		fromFakedbs.AddQueryPattern("SHOW TABLES FROM `test`", tablesResult)
+		fromFakedbs.AddQueryPattern("SELECT .*", selectResult)
 
-		toFakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
-		toFakedbs.AddQueryPattern("create database .*", &sqltypes.Result{})
-		toFakedbs.AddQueryPattern("create table .*", &sqltypes.Result{})
-		toFakedbs.AddQueryPattern("insert into .*", &sqltypes.Result{})
-		toFakedbs.AddQueryPattern("drop table .*", &sqltypes.Result{})
-	}
+		toFakedbs.AddQueryPattern("USE `test`", &sqltypes.Result{})
+		toFakedbs.AddQueryPattern("CREATE DATABASE IF NOT EXISTS `test`", &sqltypes.Result{})
+		toFakedbs.AddQueryPattern("CREATE TABLE .*", &sqltypes.Result{})
+		toFakedbs.AddQueryPattern("INSERT INTO .*", &sqltypes.Result{})
+		toFakedbs.AddQueryPattern("DROP TABLE .*", &sqltypes.Result{})
 
-	args := &Args{
-		Database:        "test",
-		User:            "mock",
-		Password:        "mock",
-		Address:         fromAddr,
-		ToUser:          "mock",
-		ToPassword:      "mock",
-		ToAddress:       toAddr,
-		ChunksizeInMB:   1,
-		Threads:         16,
-		StmtSize:        10000,
-		IntervalMs:      500,
-		OverwriteTables: true,
+		// To Database.
+		toFakedbs.AddQueryPattern("USE `totest`", &sqltypes.Result{})
+		toFakedbs.AddQueryPattern("CREATE DATABASE IF NOT EXISTS `totest`", &sqltypes.Result{})
 	}
 
 	// Streamer.
 	{
+		args := &Args{
+			Database:        "test",
+			User:            "mock",
+			Password:        "mock",
+			Address:         fromAddr,
+			ToUser:          "mock",
+			ToPassword:      "mock",
+			ToAddress:       toAddr,
+			ChunksizeInMB:   1,
+			Threads:         16,
+			StmtSize:        10000,
+			IntervalMs:      500,
+			OverwriteTables: true,
+		}
+		Streamer(log, args)
+	}
+
+	// Streamer with 2db.
+	{
+		args := &Args{
+			Database:        "test",
+			User:            "mock",
+			Password:        "mock",
+			Address:         fromAddr,
+			ToDatabase:      "totest",
+			ToUser:          "mock",
+			ToPassword:      "mock",
+			ToAddress:       toAddr,
+			ChunksizeInMB:   1,
+			Threads:         16,
+			StmtSize:        10000,
+			IntervalMs:      500,
+			OverwriteTables: true,
+		}
 		Streamer(log, args)
 	}
 }

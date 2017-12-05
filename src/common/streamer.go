@@ -30,27 +30,26 @@ func streamDatabaseSchema(log *xlog.Log, db string, from *Connection, to *Connec
 	log.Info("streaming.database[%s].schema...", db)
 }
 
-func streamTableSchema(log *xlog.Log, db string, tbl string, overwrite bool, from *Connection, to *Connection) {
-
+func streamTableSchema(log *xlog.Log, db string, todb string, tbl string, overwrite bool, from *Connection, to *Connection) {
 	qr, err := from.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", db, tbl))
 	AssertNil(err)
 	query := qr.Rows[0][1].String()
 
 	if overwrite {
-		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`.`%s`", db, tbl)
+		dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`.`%s`", todb, tbl)
 		err = to.Execute(dropQuery)
 		AssertNil(err)
 	}
 
-	err = to.Execute(fmt.Sprintf("USE `%s`", db))
+	err = to.Execute(fmt.Sprintf("USE `%s`", todb))
 	AssertNil(err)
 
 	err = to.Execute(query)
 	AssertNil(err)
-	log.Info("streaming.table[%s.%s].schema...", db, tbl)
+	log.Info("streaming.table[%s.%s].schema...", todb, tbl)
 }
 
-func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Connection, args *Args) {
+func streamTable(log *xlog.Log, db string, todb string, tbl string, from *Connection, to *Connection, args *Args) {
 	var allRows uint64
 	var allBytes uint64
 
@@ -63,7 +62,7 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 		fields = append(fields, fmt.Sprintf("`%s`", fld.Name))
 	}
 
-	err = to.Execute(fmt.Sprintf("USE `%s`", db))
+	err = to.Execute(fmt.Sprintf("USE `%s`", todb))
 	AssertNil(err)
 
 	stmtsize := 0
@@ -113,7 +112,7 @@ func streamTable(log *xlog.Log, db string, tbl string, from *Connection, to *Con
 
 	err = cursor.Close()
 	AssertNil(err)
-	log.Info("streaming.table[%s.%s].done.allrows[%v].allbytes[%vMB].thread[%d]...", db, tbl, allRows, (allBytes / 1024 / 1024), from.ID)
+	log.Info("streaming.table[%s.%s].done.allrows[%v].allbytes[%vMB].thread[%d]...", todb, tbl, allRows, (allBytes / 1024 / 1024), from.ID)
 }
 
 // Streamer used to start the streamer worker.
@@ -131,6 +130,11 @@ func Streamer(log *xlog.Log, args *Args) {
 
 	// database.
 	db := args.Database
+	todb := args.ToDatabase
+	if todb == "" {
+		todb = db
+	}
+
 	from := fromPool.Get()
 	to := toPool.Get()
 	streamDatabaseSchema(log, db, from, to)
@@ -149,7 +153,7 @@ func Streamer(log *xlog.Log, args *Args) {
 	for _, tbl := range tables {
 		from := fromPool.Get()
 		to := toPool.Get()
-		streamTableSchema(log, db, tbl, args.OverwriteTables, from, to)
+		streamTableSchema(log, db, todb, tbl, args.OverwriteTables, from, to)
 
 		wg.Add(1)
 		go func(db string, tbl string, from *Connection, to *Connection, args *Args) {
@@ -159,7 +163,7 @@ func Streamer(log *xlog.Log, args *Args) {
 				toPool.Put(to)
 			}()
 			log.Info("streaming.table[%s.%s].datas.thread[%d]...", db, tbl, from.ID)
-			streamTable(log, db, tbl, from, to, args)
+			streamTable(log, db, todb, tbl, from, to, args)
 			log.Info("streaming.table[%s.%s].datas.thread[%d].done...", db, tbl, from.ID)
 		}(db, tbl, from, to, args)
 	}

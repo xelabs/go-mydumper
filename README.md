@@ -234,32 +234,34 @@ $./bin/myloader -h 192.168.0.2 -P 3306 -u mock -p mock -d sbtest.sql
 Streaming mode, dumps datas from upstream to downstream in parallel instead of dumping to the out directory.
 ```
 $./bin/mystreamer
-Usage: ./bin/mystreamer -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -2h [DOWNSTREAM-HOST] -2P [DOWNSTREAM-PORT] -2u [DOWNSTREAM-USER] -2p [DOWNSTREAM-PASSWORD] -db [DATABASE] [-o]
+Usage: ./bin/mystreamer -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -db [DATABASE] -2h [DOWNSTREAM-HOST] -2P [DOWNSTREAM-PORT] -2u [DOWNSTREAM-USER] -2p [DOWNSTREAM-PASSWORD] [-2db DOWNSTREAM-DATABASE] [-o]
   -2P int
-        Downstream TCP/IP port to connect to (default 3306)
+    	Downstream TCP/IP port to connect to (default 3306)
+  -2db string
+    	Downstream database, default is same as upstream db
   -2h string
-        The downstream host to connect to
+    	The downstream host to connect to
   -2p string
-        Downstream user password
+    	Downstream user password
   -2u string
-        Downstream username with privileges to run the streamer
+    	Downstream username with privileges to run the streamer
   -P int
-        Upstream TCP/IP port to connect to (default 3306)
+    	Upstream TCP/IP port to connect to (default 3306)
   -db string
-        Database to stream
+    	Database to stream
   -h string
-        The upstream host to connect to
-  -o    Drop tables if they already exist
+    	The upstream host to connect to
+  -o	Drop tables if they already exist
   -p string
-        Upstream user password
+    	Upstream user password
   -s int
-        Attempted size of INSERT statement in bytes (default 1000000)
+    	Attempted size of INSERT statement in bytes (default 1000000)
   -t int
-        Number of threads to use (default 16)
+    	Number of threads to use (default 16)
   -table string
-        Table to stream
+    	Table to stream
   -u string
-        Upstream username with privileges to run the streamer
+    	Upstream username with privileges to run the streamer
 
 Examples:
 $./bin/mystreamer -h 192.168.0.2 -P 3306 -u mock -p mock -2h 192.168.0.3 -2P 3306 -2u mock -2p mock -db sbtest
