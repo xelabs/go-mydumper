@@ -26,6 +26,7 @@ type Args struct {
 	ToPassword      string
 	ToAddress       string
 	ToDatabase      string
+	ToEngine        string
 	Database        string
 	Table           string
 	Outdir          string

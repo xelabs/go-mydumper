@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/XeLabs/go-mysqlstack/sqlparser"
 	querypb "github.com/XeLabs/go-mysqlstack/sqlparser/depends/query"
 	"github.com/XeLabs/go-mysqlstack/xlog"
 )
@@ -30,7 +31,7 @@ func streamDatabaseSchema(log *xlog.Log, db string, todb string, from *Connectio
 	log.Info("streaming.database[%s].schema...", todb)
 }
 
-func streamTableSchema(log *xlog.Log, db string, todb string, tbl string, overwrite bool, from *Connection, to *Connection) {
+func streamTableSchema(log *xlog.Log, db string, todb string, toengine string, tbl string, overwrite bool, from *Connection, to *Connection) {
 	qr, err := from.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", db, tbl))
 	AssertNil(err)
 	query := qr.Rows[0][1].String()
@@ -41,6 +42,16 @@ func streamTableSchema(log *xlog.Log, db string, todb string, tbl string, overwr
 		AssertNil(err)
 	}
 
+	// Rewrite the table engine.
+	if toengine != "" {
+		node, err := sqlparser.Parse(query)
+		AssertNil(err)
+		if ddl, ok := node.(*sqlparser.DDL); ok {
+			ddl.TableSpec.Options.Engine = toengine
+			query = sqlparser.String(ddl)
+			log.Warning("streaming.schema.engine.rewritten:%v", query)
+		}
+	}
 	err = to.Execute(fmt.Sprintf("USE `%s`", todb))
 	AssertNil(err)
 
@@ -134,6 +145,7 @@ func Streamer(log *xlog.Log, args *Args) {
 	if todb == "" {
 		todb = db
 	}
+	toengine := args.ToEngine
 
 	from := fromPool.Get()
 	to := toPool.Get()
@@ -153,7 +165,7 @@ func Streamer(log *xlog.Log, args *Args) {
 	for _, tbl := range tables {
 		from := fromPool.Get()
 		to := toPool.Get()
-		streamTableSchema(log, db, todb, tbl, args.OverwriteTables, from, to)
+		streamTableSchema(log, db, todb, toengine, tbl, args.OverwriteTables, from, to)
 
 		wg.Add(1)
 		go func(db string, tbl string, from *Connection, to *Connection, args *Args) {

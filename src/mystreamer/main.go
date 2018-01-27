@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	flagOverwriteTables                                                                           bool
-	flagThreads, flagPort, flag2port, flagStmtSize                                                int
-	flagUser, flagPasswd, flagHost, flag2user, flag2passwd, flag2host, flagDb, flag2Db, flagTable string
+	flagOverwriteTables                                                                                        bool
+	flagThreads, flagPort, flag2port, flagStmtSize                                                             int
+	flagUser, flagPasswd, flagHost, flag2user, flag2passwd, flag2host, flagDb, flag2Db, flag2Engine, flagTable string
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
@@ -36,6 +36,7 @@ func init() {
 	flag.StringVar(&flag2host, "2h", "", "The downstream host to connect to")
 	flag.IntVar(&flag2port, "2P", 3306, "Downstream TCP/IP port to connect to")
 	flag.StringVar(&flag2Db, "2db", "", "Downstream database, default is same as upstream db")
+	flag.StringVar(&flag2Engine, "2engine", "", "Downstream table engine")
 	flag.StringVar(&flagDb, "db", "", "Database to stream")
 	flag.StringVar(&flagTable, "table", "", "Table to stream")
 	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
@@ -66,6 +67,7 @@ func main() {
 		ToAddress:       fmt.Sprintf("%s:%d", flag2host, flag2port),
 		Database:        flagDb,
 		ToDatabase:      flag2Db,
+		ToEngine:        flag2Engine,
 		Table:           flagTable,
 		Threads:         flagThreads,
 		StmtSize:        flagStmtSize,

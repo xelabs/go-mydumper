@@ -165,4 +165,25 @@ func TestStreamer(t *testing.T) {
 		}
 		Streamer(log, args)
 	}
+
+	// Streamer with toengine.
+	{
+		args := &Args{
+			Database:        "test",
+			User:            "mock",
+			Password:        "mock",
+			Address:         fromAddr,
+			ToDatabase:      "totest",
+			ToEngine:        "tokudb",
+			ToUser:          "mock",
+			ToPassword:      "mock",
+			ToAddress:       toAddr,
+			ChunksizeInMB:   1,
+			Threads:         16,
+			StmtSize:        10000,
+			IntervalMs:      500,
+			OverwriteTables: true,
+		}
+		Streamer(log, args)
+	}
 }
