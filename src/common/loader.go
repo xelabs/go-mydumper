@@ -19,8 +19,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/XeLabs/go-mysqlstack/common"
-	"github.com/XeLabs/go-mysqlstack/xlog"
+	"github.com/xelabs/go-mysqlstack/common"
+	"github.com/xelabs/go-mysqlstack/xlog"
 )
 
 // Files tuple.

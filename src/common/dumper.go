@@ -16,8 +16,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	querypb "github.com/XeLabs/go-mysqlstack/sqlparser/depends/query"
-	"github.com/XeLabs/go-mysqlstack/xlog"
+	querypb "github.com/xelabs/go-mysqlstack/sqlparser/depends/query"
+	"github.com/xelabs/go-mysqlstack/xlog"
 )
 
 func writeMetaData(args *Args) {

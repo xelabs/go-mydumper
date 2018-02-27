@@ -16,9 +16,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/XeLabs/go-mysqlstack/sqlparser"
-	querypb "github.com/XeLabs/go-mysqlstack/sqlparser/depends/query"
-	"github.com/XeLabs/go-mysqlstack/xlog"
+	"github.com/xelabs/go-mysqlstack/sqlparser"
+	querypb "github.com/xelabs/go-mysqlstack/sqlparser/depends/query"
+	"github.com/xelabs/go-mysqlstack/xlog"
 )
 
 func streamDatabaseSchema(log *xlog.Log, db string, todb string, from *Connection, to *Connection) {

@@ -14,7 +14,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/XeLabs/go-mysqlstack/common"
+	"github.com/xelabs/go-mysqlstack/common"
 )
 
 // Args tuple.

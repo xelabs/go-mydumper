@@ -5,11 +5,12 @@ all: get build test
 
 get:
 	@echo "--> go get..."
-	go get github.com/XeLabs/go-mysqlstack/driver
+	go get github.com/xelabs/go-mysqlstack/driver
 	go get github.com/stretchr/testify/assert
 	go get github.com/pierrre/gotestcover
 
 build:
+	@$(MAKE) get
 	@echo "--> Building..."
 	go build -v -o bin/mydumper src/mydumper/main.go
 	go build -v -o bin/myloader src/myloader/main.go

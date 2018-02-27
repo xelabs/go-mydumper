@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/XeLabs/go-mysqlstack/xlog"
+	"github.com/xelabs/go-mysqlstack/xlog"
 )
 
 var (
