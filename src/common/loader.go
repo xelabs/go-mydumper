@@ -84,7 +84,12 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 		name := strings.TrimSuffix(base, schemaSuffix)
 		db := strings.Split(name, ".")[0]
 
+		log.Info("working.table[%s]", name)
+
 		err := conn.Execute(fmt.Sprintf("USE `%s`", db))
+		AssertNil(err)
+
+		err = conn.Execute("SET FOREIGN_KEY_CHECKS=0")
 		AssertNil(err)
 
 		data, err := ReadFile(table)
@@ -120,6 +125,9 @@ func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 
 	log.Info("restoring.tables[%s].parts[%s].thread[%d]", tbl, part, conn.ID)
 	err := conn.Execute(fmt.Sprintf("USE `%s`", db))
+	AssertNil(err)
+
+	err = conn.Execute("SET FOREIGN_KEY_CHECKS=0")
 	AssertNil(err)
 
 	data, err := ReadFile(table)
