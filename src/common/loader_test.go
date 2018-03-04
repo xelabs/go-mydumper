@@ -12,10 +12,10 @@ package common
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/xelabs/go-mysqlstack/driver"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/sqltypes"
 	"github.com/xelabs/go-mysqlstack/xlog"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestLoader(t *testing.T) {
@@ -32,7 +32,7 @@ func TestLoader(t *testing.T) {
 		fakedbs.AddQuery("create table `t1` (`a` int(11) default null,`b` varchar(100) default null) engine=innodb", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("insert into .*", &sqltypes.Result{})
-        fakedbs.AddQueryPattern("drop table .*", &sqltypes.Result{})
+		fakedbs.AddQueryPattern("drop table .*", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("set foreign_key_checks=.*", &sqltypes.Result{})
 	}
 
