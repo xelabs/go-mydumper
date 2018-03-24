@@ -99,6 +99,7 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 		for _, query := range querys {
 			if !strings.HasPrefix(query, "/*") && query != "" {
 				if overwrite {
+					log.Info("drop(overwrite.is.true).table[%s.%s]", db, name)
 					dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS `%s`.`%s`", db, name)
 					err = conn.Execute(dropQuery)
 					AssertNil(err)
