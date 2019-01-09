@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	flagOverwriteTables                                                                                        bool
-	flagThreads, flagPort, flag2port, flagStmtSize                                                             int
-	flagUser, flagPasswd, flagHost, flag2user, flag2passwd, flag2host, flagDb, flag2Db, flag2Engine, flagTable string
+	flagOverwriteTables                                                                                                         bool
+	flagThreads, flagPort, flag2port, flagStmtSize                                                                              int
+	flagUser, flagPasswd, flagHost, flag2user, flag2passwd, flag2host, flagDb, flag2Db, flag2Engine, flagTable, flagSessionVars string
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
@@ -42,6 +42,7 @@ func init() {
 	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
 	flag.IntVar(&flagStmtSize, "s", 1000000, "Attempted size of INSERT statement in bytes")
 	flag.BoolVar(&flagOverwriteTables, "o", false, "Drop tables if they already exist")
+	flag.StringVar(&flagSessionVars, "vars", "", "Session variables")
 }
 
 func usage() {
@@ -73,6 +74,7 @@ func main() {
 		StmtSize:        flagStmtSize,
 		IntervalMs:      10 * 1000,
 		OverwriteTables: flagOverwriteTables,
+		SessionVars:     flagSessionVars,
 	}
 	common.Streamer(log, args)
 }

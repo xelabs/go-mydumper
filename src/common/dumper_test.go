@@ -15,11 +15,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/xelabs/go-mysqlstack/driver"
 	querypb "github.com/xelabs/go-mysqlstack/sqlparser/depends/query"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/sqltypes"
 	"github.com/xelabs/go-mysqlstack/xlog"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDumper(t *testing.T) {
@@ -111,6 +111,7 @@ func TestDumper(t *testing.T) {
 		fakedbs.AddQueryPattern("show create table .*", schemaResult)
 		fakedbs.AddQueryPattern("show tables from .*", tablesResult)
 		fakedbs.AddQueryPattern("select .*", selectResult)
+		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
 	args := &Args{
@@ -123,6 +124,7 @@ func TestDumper(t *testing.T) {
 		Threads:       16,
 		StmtSize:      10000,
 		IntervalMs:    500,
+		SessionVars:   "SET @@radon_streaming_fetch='ON'; SET @@xx=1;",
 	}
 
 	os.RemoveAll(args.Outdir)

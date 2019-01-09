@@ -131,11 +131,11 @@ func Streamer(log *xlog.Log, args *Args) {
 	var tables []string
 	var wg sync.WaitGroup
 
-	fromPool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password)
+	fromPool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password, args.SessionVars)
 	AssertNil(err)
 	defer fromPool.Close()
 
-	toPool, err := NewPool(log, args.Threads, args.ToAddress, args.ToUser, args.ToPassword)
+	toPool, err := NewPool(log, args.Threads, args.ToAddress, args.ToUser, args.ToPassword, "")
 	AssertNil(err)
 	defer toPool.Close()
 

@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	flagChunksize, flagThreads, flagPort, flagStmtSize         int
-	flagUser, flagPasswd, flagHost, flagDb, flagTable, flagDir string
+	flagChunksize, flagThreads, flagPort, flagStmtSize                          int
+	flagUser, flagPasswd, flagHost, flagDb, flagTable, flagDir, flagSessionVars string
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
@@ -36,6 +36,7 @@ func init() {
 	flag.IntVar(&flagChunksize, "F", 128, "Split tables into chunks of this output file size. This value is in MB")
 	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
 	flag.IntVar(&flagStmtSize, "s", 1000000, "Attempted size of INSERT statement in bytes")
+	flag.StringVar(&flagSessionVars, "vars", "", "Session variables")
 }
 
 func usage() {
@@ -68,6 +69,7 @@ func main() {
 		Threads:       flagThreads,
 		StmtSize:      flagStmtSize,
 		IntervalMs:    10 * 1000,
+		SessionVars:   flagSessionVars,
 	}
 
 	common.Dumper(log, args)

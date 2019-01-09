@@ -49,6 +49,8 @@ Usage: ./bin/mydumper -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -db [DATABASE]
     	Table to dump
   -u string
     	Username with privileges to run the dump
+  -vars string
+    	Session variables
 
 Examples:
 $./bin/mydumper -h 192.168.0.1 -P 3306 -u mock -p mock -db sbtest  -o sbtest.sql

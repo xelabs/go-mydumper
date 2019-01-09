@@ -47,14 +47,18 @@ func (conn *Connection) StreamFetch(query string) (driver.Rows, error) {
 }
 
 // NewPool creates the new pool.
-func NewPool(log *xlog.Log, cap int, address string, user string, password string) (*Pool, error) {
+func NewPool(log *xlog.Log, cap int, address string, user string, password string, vars string) (*Pool, error) {
 	conns := make(chan *Connection, cap)
 	for i := 0; i < cap; i++ {
 		client, err := driver.NewConn(user, password, address, "", "utf8")
 		if err != nil {
 			return nil, err
 		}
-		conns <- &Connection{ID: i, client: client}
+		conn := &Connection{ID: i, client: client}
+		if vars != "" {
+			conn.Execute(vars)
+		}
+		conns <- conn
 	}
 
 	return &Pool{

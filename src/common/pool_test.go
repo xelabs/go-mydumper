@@ -14,10 +14,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/xelabs/go-mysqlstack/driver"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/sqltypes"
 	"github.com/xelabs/go-mysqlstack/xlog"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPool(t *testing.T) {
@@ -33,7 +33,7 @@ func TestPool(t *testing.T) {
 		fakedbs.AddQueryPattern("select .*", &sqltypes.Result{})
 	}
 
-	pool, err := NewPool(log, 8, address, "mock", "mock")
+	pool, err := NewPool(log, 8, address, "mock", "mock", "")
 	assert.Nil(t, err)
 
 	var wg sync.WaitGroup
