@@ -85,7 +85,7 @@ func TestDumper(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
 		}}
 
@@ -98,10 +98,10 @@ func TestDumper(t *testing.T) {
 		},
 		Rows: [][]sqltypes.Value{
 			{
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1-05-11")),
 			},
 			{
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
 		}}
 
@@ -137,7 +137,7 @@ func TestDumper(t *testing.T) {
 	{
 		Dumper(log, args)
 	}
-	dat, err := ioutil.ReadFile(args.Outdir + "/test.t1.00001.sql")
+	dat, err := ioutil.ReadFile(args.Outdir + "/test.t1-05-11.00001.sql")
 	assert.Nil(t, err)
 	want := strings.Contains(string(dat), `(11,"11\"xx\"","",NULL,210.01,NULL)`)
 	assert.True(t, want)

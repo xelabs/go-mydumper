@@ -83,6 +83,8 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 		base := filepath.Base(table)
 		name := strings.TrimSuffix(base, schemaSuffix)
 		db := strings.Split(name, ".")[0]
+		tbl := strings.Split(name, ".")[1]
+		name = fmt.Sprintf("`%v`.`%v`", db, tbl)
 
 		log.Info("working.table[%s]", name)
 
