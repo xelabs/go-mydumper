@@ -110,8 +110,10 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 		}
 	}
 	if chunkbytes > 0 {
-		insertone := fmt.Sprintf("INSERT INTO `%s`(%s) VALUES\n%s", table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
-		inserts = append(inserts, insertone)
+		if len(rows) > 0 {
+			insertone := fmt.Sprintf("INSERT INTO `%s`(%s) VALUES\n%s", table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
+			inserts = append(inserts, insertone)
+		}
 
 		query := strings.Join(inserts, ";\n") + ";\n"
 		file := fmt.Sprintf("%s/%s.%s.%05d.sql", args.Outdir, args.Database, table, fileNo)
