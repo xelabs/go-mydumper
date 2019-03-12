@@ -124,7 +124,7 @@ func TestDumper(t *testing.T) {
 		Threads:       16,
 		StmtSize:      10000,
 		IntervalMs:    500,
-		SessionVars:   "SET @@radon_streaming_fetch='ON'; SET @@xx=1;",
+		SessionVars:   "SET @@radon_streaming_fetch='ON', @@xx=1",
 	}
 
 	os.RemoveAll(args.Outdir)
