@@ -135,7 +135,7 @@ func Streamer(log *xlog.Log, args *Args) {
 	AssertNil(err)
 	defer fromPool.Close()
 
-	toPool, err := NewPool(log, args.Threads, args.ToAddress, args.ToUser, args.ToPassword, "")
+	toPool, err := NewPool(log, args.Threads, args.ToAddress, args.ToUser, args.ToPassword, args.SessionVars)
 	AssertNil(err)
 	defer toPool.Close()
 
