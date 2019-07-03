@@ -63,6 +63,12 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 	chunkbytes := 0
 	rows := make([]string, 0, 256)
 	inserts := make([]string, 0, 256)
+
+	insertStatement := "INSERT"
+	if args.InsertIgnore {
+		insertStatement += " IGNORE"
+	}
+
 	for cursor.Next() {
 		row, err := cursor.RowValues()
 		AssertNil(err)
@@ -92,7 +98,7 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 		atomic.AddUint64(&args.Allrows, 1)
 
 		if stmtsize >= args.StmtSize {
-			insertone := fmt.Sprintf("INSERT INTO `%s`(%s) VALUES\n%s", table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
+			insertone := fmt.Sprintf("%s INTO `%s`(%s) VALUES\n%s", insertStatement, table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
 			inserts = append(inserts, insertone)
 			rows = rows[:0]
 			stmtsize = 0
@@ -111,7 +117,7 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 	}
 	if chunkbytes > 0 {
 		if len(rows) > 0 {
-			insertone := fmt.Sprintf("INSERT INTO `%s`(%s) VALUES\n%s", table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
+			insertone := fmt.Sprintf("%s INTO `%s`(%s) VALUES\n%s", insertStatement, table, strings.Join(fields, ","), strings.Join(rows, ",\n"))
 			inserts = append(inserts, insertone)
 		}
 

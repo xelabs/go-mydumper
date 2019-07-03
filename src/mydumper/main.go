@@ -21,6 +21,7 @@ import (
 var (
 	flagChunksize, flagThreads, flagPort, flagStmtSize                          int
 	flagUser, flagPasswd, flagHost, flagDb, flagTable, flagDir, flagSessionVars string
+	flagInsertIgnore                                                            bool
 
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
@@ -37,6 +38,8 @@ func init() {
 	flag.IntVar(&flagThreads, "t", 16, "Number of threads to use")
 	flag.IntVar(&flagStmtSize, "s", 1000000, "Attempted size of INSERT statement in bytes")
 	flag.StringVar(&flagSessionVars, "vars", "", "Session variables")
+	flag.BoolVar(&flagInsertIgnore, "ignore", false, "Use INSERT IGNORE instead of simple INSERT")
+
 }
 
 func usage() {
@@ -70,6 +73,7 @@ func main() {
 		StmtSize:      flagStmtSize,
 		IntervalMs:    10 * 1000,
 		SessionVars:   flagSessionVars,
+		InsertIgnore:  flagInsertIgnore,
 	}
 
 	common.Dumper(log, args)

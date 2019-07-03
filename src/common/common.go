@@ -37,6 +37,7 @@ type Args struct {
 	Allbytes        uint64
 	Allrows         uint64
 	OverwriteTables bool
+	InsertIgnore    bool
 
 	// Interval in millisecond.
 	IntervalMs int
