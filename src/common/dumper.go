@@ -48,8 +48,13 @@ func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, table string) 
 func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 	var allBytes uint64
 	var allRows uint64
+	var where string
 
-	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT /*backup*/ * FROM `%s`.`%s`", args.Database, table))
+	if v, ok := args.Wheres[table]; ok {
+		where = fmt.Sprintf(" WHERE %v", v)
+	}
+
+	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT * FROM `%s`.`%s` %s", args.Database, table, where))
 	AssertNil(err)
 
 	fields := make([]string, 0, 16)

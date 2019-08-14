@@ -15,3 +15,8 @@ outdir = ./dumper-sql
 chunksize = 128
 # Session variables, split by ;
 vars= "xx=xx;xx=xx;"
+
+# Use this to restrict exported data. These are optional
+[where]
+sample_table1 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+sample_table2 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
