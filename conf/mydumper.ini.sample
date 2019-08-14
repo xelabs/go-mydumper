@@ -11,3 +11,7 @@ password = pwd
 database = xx
 # Directory to dump files to
 outdir = ./dumper-sql
+# Split tables into chunks of this output file size. This value is in MB
+chunksize = 128
+# Session variables, split by ;
+vars= "xx=xx;xx=xx;"

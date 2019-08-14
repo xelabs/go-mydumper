@@ -42,7 +42,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	args, err := parseConfig(flagConfig)
+	args, err := parseDumperConfig(flagConfig)
 	common.AssertNil(err)
 
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
