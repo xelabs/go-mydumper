@@ -27,33 +27,13 @@ $make test
 ### mydumper
 
 ```
-./bin/mydumper --help
-Usage: ./bin/mydumper -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -db [DATABASE] -o [OUTDIR]
-  -F int
-    	Split tables into chunks of this output file size. This value is in MB (default 128)
-  -P int
-    	TCP/IP port to connect to (default 3306)
-  -db string
-    	Database to dump
-  -h string
-    	The host to connect to
-  -o string
-    	Directory to output files to
-  -p string
-    	User password
-  -s int
-    	Attempted size of INSERT statement in bytes (default 1000000)
-  -t int
-    	Number of threads to use (default 16)
-  -table string
-    	Table to dump
-  -u string
-    	Username with privileges to run the dump
-  -vars string
-    	Session variables
+./bin/mydumper -h
+Usage: ./bin/mydumper -c conf/mydumper.ini.sample
+  -c string
+    	config file
 
 Examples:
-$./bin/mydumper -h 192.168.0.1 -P 3306 -u mock -p mock -db sbtest  -o sbtest.sql
+$./bin/mydumper -c conf/mydumper.ini.sample
  2017/10/25 13:12:52.933391 dumper.go:35:         [INFO]        dumping.database[sbtest].schema...
  2017/10/25 13:12:52.937743 dumper.go:45:         [INFO]        dumping.table[sbtest.benchyou0].schema...
  2017/10/25 13:12:52.937791 dumper.go:168:        [INFO]        dumping.table[sbtest.benchyou0].datas.thread[1]...
