@@ -17,7 +17,9 @@ import (
 )
 
 func parseDumperConfig(file string) (*common.Args, error) {
-	args := &common.Args{}
+	args := &common.Args{
+		Wheres: make(map[string]string, 0),
+	}
 
 	cfg, err := ini.ReadConfigFile(file)
 	if err != nil {
@@ -58,6 +60,11 @@ func parseDumperConfig(file string) (*common.Args, error) {
 	}
 	table, _ := cfg.GetString("mysql", "table")
 
+	// Options
+	if err := loadOptions(cfg, "where", args.Wheres); err != nil {
+		return nil, err
+	}
+
 	args.Address = fmt.Sprintf("%s:%d", host, port)
 	args.User = user
 	args.Password = password
@@ -70,4 +77,20 @@ func parseDumperConfig(file string) (*common.Args, error) {
 	args.StmtSize = 1000000
 	args.IntervalMs = 10 * 1000
 	return args, nil
+}
+
+func loadOptions(cfg *ini.ConfigFile, section string, optMap map[string]string) error {
+	var err error
+	var opts []string
+
+	if opts, err = cfg.GetOptions(section); err != nil {
+		return err
+	}
+
+	for _, key := range opts {
+		if optMap[key], err = cfg.GetString(section, key); err != nil {
+			return err
+		}
+	}
+	return nil
 }
