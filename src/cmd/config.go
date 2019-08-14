@@ -16,7 +16,7 @@ import (
 	ini "github.com/dlintw/goconf"
 )
 
-func parseConfig(file string) (*common.Args, error) {
+func parseDumperConfig(file string) (*common.Args, error) {
 	args := &common.Args{}
 
 	cfg, err := ini.ReadConfigFile(file)
@@ -48,8 +48,15 @@ func parseConfig(file string) (*common.Args, error) {
 	if err != nil {
 		return nil, err
 	}
+	sessionVars, err := cfg.GetString("mysql", "vars")
+	if err != nil {
+		return nil, err
+	}
+	chunksizemb, err := cfg.GetInt("mysql", "chunksize")
+	if err != nil {
+		return nil, err
+	}
 	table, _ := cfg.GetString("mysql", "table")
-	sessionVars, _ := cfg.GetString("mysql", "vars")
 
 	args.Address = fmt.Sprintf("%s:%d", host, port)
 	args.User = user
@@ -57,10 +64,10 @@ func parseConfig(file string) (*common.Args, error) {
 	args.Database = database
 	args.Table = table
 	args.Outdir = outdir
-	args.ChunksizeInMB = 128
+	args.ChunksizeInMB = chunksizemb
+	args.SessionVars = sessionVars
 	args.Threads = 16
 	args.StmtSize = 1000000
 	args.IntervalMs = 10 * 1000
-	args.SessionVars = sessionVars
 	return args, nil
 }
