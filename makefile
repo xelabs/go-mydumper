@@ -6,15 +6,16 @@ all: get build test
 get:
 	@echo "--> go get..."
 	go get github.com/xelabs/go-mysqlstack/driver
+	go get github.com/dlintw/goconf
 	go get github.com/stretchr/testify/assert
 	go get github.com/pierrre/gotestcover
 
 build:
 	@$(MAKE) get
 	@echo "--> Building..."
-	go build -v -o bin/mydumper src/mydumper/main.go
-	go build -v -o bin/myloader src/myloader/main.go
-	go build -v -o bin/mystreamer src/mystreamer/main.go
+	go build -v -o bin/mydumper src/cmd/mydumper.go src/cmd/config.go
+	go build -v -o bin/myloader src/cmd/myloader.go
+	go build -v -o bin/mystreamer src/cmd/mystreamer.go
 	@chmod 755 bin/*
 
 clean:

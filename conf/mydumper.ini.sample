@@ -1,0 +1,13 @@
+[mysql]
+# The host to connect to
+host = 127.0.0.1
+# TCP/IP port to conect to
+port = 3306
+# Username with privileges to run the dump
+user = root
+# User password
+password = pwd
+# Database to dump
+database = xx
+# Directory to dump files to
+outdir = ./dumper-sql
