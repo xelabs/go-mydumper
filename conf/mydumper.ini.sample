@@ -20,3 +20,11 @@ vars= "xx=xx;xx=xx;"
 [where]
 sample_table1 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
 sample_table2 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+
+# Use this to override value returned from tables. These are optional
+[select]
+user.salt = 'reset salt of all system users'
+user.password = 'reset password of all system users'
+
+customer.first_name = CONCAT('Bohu', id)
+customer.last_name = 'Last'

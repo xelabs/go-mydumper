@@ -49,19 +49,33 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 	var allBytes uint64
 	var allRows uint64
 	var where string
+	var selfields []string
+
+	fields := make([]string, 0, 16)
+	{
+		cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT * FROM `%s`.`%s` LIMIT 1", args.Database, table))
+		AssertNil(err)
+
+		flds := cursor.Fields()
+		for _, fld := range flds {
+			fields = append(fields, fmt.Sprintf("`%s`", fld.Name))
+			replacement, ok := args.Selects[table][fld.Name]
+			if ok {
+				selfields = append(selfields, fmt.Sprintf("%s AS `%s`", replacement, fld.Name))
+			} else {
+				selfields = append(selfields, fmt.Sprintf("`%s`", fld.Name))
+			}
+		}
+		err = cursor.Close()
+		AssertNil(err)
+	}
 
 	if v, ok := args.Wheres[table]; ok {
 		where = fmt.Sprintf(" WHERE %v", v)
 	}
 
-	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT * FROM `%s`.`%s` %s", args.Database, table, where))
+	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT %s FROM `%s`.`%s` %s", strings.Join(selfields, ", "), args.Database, table, where))
 	AssertNil(err)
-
-	fields := make([]string, 0, 16)
-	flds := cursor.Fields()
-	for _, fld := range flds {
-		fields = append(fields, fmt.Sprintf("`%s`", fld.Name))
-	}
 
 	fileNo := 1
 	stmtsize := 0
