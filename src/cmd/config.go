@@ -12,6 +12,7 @@ package main
 import (
 	"common"
 	"fmt"
+	"strings"
 
 	ini "github.com/dlintw/goconf"
 )
@@ -63,6 +64,27 @@ func parseDumperConfig(file string) (*common.Args, error) {
 	// Options
 	if err := loadOptions(cfg, "where", args.Wheres); err != nil {
 		return nil, err
+	}
+
+	var selects []string
+	if selects, err = cfg.GetOptions("select"); err != nil {
+		return nil, err
+	}
+	for _, tblcol := range selects {
+		var table, column string
+		split := strings.Split(tblcol, ".")
+		table = split[0]
+		column = split[1]
+
+		if args.Selects == nil {
+			args.Selects = make(map[string]map[string]string)
+		}
+		if args.Selects[table] == nil {
+			args.Selects[table] = make(map[string]string, 0)
+		}
+		if args.Selects[table][column], err = cfg.GetString("select", tblcol); err != nil {
+			return nil, err
+		}
 	}
 
 	args.Address = fmt.Sprintf("%s:%d", host, port)
