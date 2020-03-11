@@ -7,6 +7,9 @@ get:
 	@echo "--> go get..."
 	go get github.com/xelabs/go-mysqlstack/driver
 	go get github.com/dlintw/goconf
+
+gettest:
+	@echo "--> go get..."
 	go get github.com/stretchr/testify/assert
 	go get github.com/pierrre/gotestcover
 
@@ -28,6 +31,8 @@ fmt:
 	go vet ./...
 
 test:
+	@$(MAKE) get
+	@$(MAKE) gettest
 	@echo "--> Testing..."
 	@$(MAKE) testcommon
 
@@ -37,8 +42,10 @@ testcommon:
 # code coverage
 COVPKGS =	common
 coverage:
+	@$(MAKE) get
+	@$(MAKE) gettest
 	go build -v -o bin/gotestcover \
 	src/github.com/pierrre/gotestcover/*.go;
-	gotestcover -coverprofile=coverage.out -v $(COVPKGS)
+	bin/gotestcover -coverprofile=coverage.out -v $(COVPKGS)
 	go tool cover -html=coverage.out
 .PHONY: get build clean fmt test coverage

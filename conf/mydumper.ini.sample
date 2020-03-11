@@ -14,17 +14,18 @@ outdir = ./dumper-sql
 # Split tables into chunks of this output file size. This value is in MB
 chunksize = 128
 # Session variables, split by ;
-vars= "xx=xx;xx=xx;"
+# vars= "xx=xx;xx=xx;"
+vars= ""
 
 # Use this to restrict exported data. These are optional
 [where]
-sample_table1 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-sample_table2 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+# sample_table1 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+# sample_table2 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
 
 # Use this to override value returned from tables. These are optional
 [select]
-user.salt = 'reset salt of all system users'
-user.password = 'reset password of all system users'
+# user.salt = 'reset salt of all system users'
+# user.password = 'reset password of all system users'
 
-customer.first_name = CONCAT('Bohu', id)
-customer.last_name = 'Last'
+# customer.first_name = CONCAT('Bohu', id)
+# customer.last_name = 'Last'

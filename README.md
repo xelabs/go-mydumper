@@ -1,4 +1,7 @@
-[![Build Status](https://travis-ci.org/xelabs/go-mydumper.png)](https://travis-ci.org/xelabs/go-mydumper) [![Go Report Card](https://goreportcard.com/badge/github.com/xelabs/go-mydumper)](https://goreportcard.com/report/github.com/xelabs/go-mydumper) [![codecov.io](https://codecov.io/gh/xelabs/go-mydumper/graphs/badge.svg)](https://codecov.io/gh/xelabs/go-mydumper/branch/master)
+[![Github Actions Status](https://github.com/xelabs/go-mydumper/workflows/mydumper%20Build/badge.svg)](https://github.com/xelabs/go-mydumper/actions?query=workflow%3A%22mydumper+Build%22)
+[![Github Actions Status](https://github.com/xelabs/go-mydumper/workflows/mydumper%20Test/badge.svg)](https://github.com/xelabs/go-mydumper/actions?query=workflow%3A%22mydumper+Test%22)
+[![Github Actions Status](https://github.com/xelabs/go-mydumper/workflows/mydumper%20Coverage/badge.svg)](https://github.com/xelabs/go-mydumper/actions?query=workflow%3A%22mydumper+Coverage%22)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xelabs/go-mydumper)](https://goreportcard.com/report/github.com/xelabs/go-mydumper) [![codecov.io](https://codecov.io/gh/xelabs/go-mydumper/graphs/badge.svg)](https://codecov.io/gh/xelabs/go-mydumper/branch/master)
 
 # go-mydumper
 
