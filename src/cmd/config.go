@@ -43,10 +43,7 @@ func parseDumperConfig(file string) (*common.Args, error) {
 	if err != nil {
 		return nil, err
 	}
-	database, err := cfg.GetString("mysql", "database")
-	if err != nil {
-		return nil, err
-	}
+	database, _ := cfg.GetString("mysql", "database")
 	outdir, err := cfg.GetString("mysql", "outdir")
 	if err != nil {
 		return nil, err

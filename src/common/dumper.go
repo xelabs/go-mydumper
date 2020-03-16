@@ -25,27 +25,27 @@ func writeMetaData(args *Args) {
 	WriteFile(file, "")
 }
 
-func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *Args) {
-	err := conn.Execute(fmt.Sprintf("USE `%s`", args.Database))
+func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *Args, database string) {
+	err := conn.Execute(fmt.Sprintf("USE `%s`", database))
 	AssertNil(err)
 
-	schema := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`;", args.Database)
-	file := fmt.Sprintf("%s/%s-schema-create.sql", args.Outdir, args.Database)
+	schema := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s`;", database)
+	file := fmt.Sprintf("%s/%s-schema-create.sql", args.Outdir, database)
 	WriteFile(file, schema)
-	log.Info("dumping.database[%s].schema...", args.Database)
+	log.Info("dumping.database[%s].schema...", database)
 }
 
-func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, table string) {
-	qr, err := conn.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", args.Database, table))
+func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, database string, table string) {
+	qr, err := conn.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", database, table))
 	AssertNil(err)
 	schema := qr.Rows[0][1].String() + ";\n"
 
-	file := fmt.Sprintf("%s/%s.%s-schema.sql", args.Outdir, args.Database, table)
+	file := fmt.Sprintf("%s/%s.%s-schema.sql", args.Outdir, database, table)
 	WriteFile(file, schema)
-	log.Info("dumping.table[%s.%s].schema...", args.Database, table)
+	log.Info("dumping.table[%s.%s].schema...", database, table)
 }
 
-func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
+func dumpTable(log *xlog.Log, conn *Connection, args *Args, database string, table string) {
 	var allBytes uint64
 	var allRows uint64
 	var where string
@@ -53,7 +53,7 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 
 	fields := make([]string, 0, 16)
 	{
-		cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT * FROM `%s`.`%s` LIMIT 1", args.Database, table))
+		cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT * FROM `%s`.`%s` LIMIT 1", database, table))
 		AssertNil(err)
 
 		flds := cursor.Fields()
@@ -74,7 +74,7 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 		where = fmt.Sprintf(" WHERE %v", v)
 	}
 
-	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT %s FROM `%s`.`%s` %s", strings.Join(selfields, ", "), args.Database, table, where))
+	cursor, err := conn.StreamFetch(fmt.Sprintf("SELECT %s FROM `%s`.`%s` %s", strings.Join(selfields, ", "), database, table, where))
 	AssertNil(err)
 
 	fileNo := 1
@@ -119,10 +119,10 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 
 		if (chunkbytes / 1024 / 1024) >= args.ChunksizeInMB {
 			query := strings.Join(inserts, ";\n") + ";\n"
-			file := fmt.Sprintf("%s/%s.%s.%05d.sql", args.Outdir, args.Database, table, fileNo)
+			file := fmt.Sprintf("%s/%s.%s.%05d.sql", args.Outdir, database, table, fileNo)
 			WriteFile(file, query)
 
-			log.Info("dumping.table[%s.%s].rows[%v].bytes[%vMB].part[%v].thread[%d]", args.Database, table, allRows, (allBytes / 1024 / 1024), fileNo, conn.ID)
+			log.Info("dumping.table[%s.%s].rows[%v].bytes[%vMB].part[%v].thread[%d]", database, table, allRows, (allBytes / 1024 / 1024), fileNo, conn.ID)
 			inserts = inserts[:0]
 			chunkbytes = 0
 			fileNo++
@@ -135,17 +135,17 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, table string) {
 		}
 
 		query := strings.Join(inserts, ";\n") + ";\n"
-		file := fmt.Sprintf("%s/%s.%s.%05d.sql", args.Outdir, args.Database, table, fileNo)
+		file := fmt.Sprintf("%s/%s.%s.%05d.sql", args.Outdir, database, table, fileNo)
 		WriteFile(file, query)
 	}
 	err = cursor.Close()
 	AssertNil(err)
 
-	log.Info("dumping.table[%s.%s].done.allrows[%v].allbytes[%vMB].thread[%d]...", args.Database, table, allRows, (allBytes / 1024 / 1024), conn.ID)
+	log.Info("dumping.table[%s.%s].done.allrows[%v].allbytes[%vMB].thread[%d]...", database, table, allRows, (allBytes / 1024 / 1024), conn.ID)
 }
 
-func allTables(log *xlog.Log, conn *Connection, args *Args) []string {
-	qr, err := conn.Fetch(fmt.Sprintf("SHOW TABLES FROM `%s`", args.Database))
+func allTables(log *xlog.Log, conn *Connection, database string) []string {
+	qr, err := conn.Fetch(fmt.Sprintf("SHOW TABLES FROM `%s`", database))
 	AssertNil(err)
 
 	tables := make([]string, 0, 128)
@@ -153,6 +153,17 @@ func allTables(log *xlog.Log, conn *Connection, args *Args) []string {
 		tables = append(tables, t[0].String())
 	}
 	return tables
+}
+
+func allDatabases(log *xlog.Log, conn *Connection) []string {
+	qr, err := conn.Fetch("SHOW DATABASES")
+	AssertNil(err)
+
+	databases := make([]string, 0, 128)
+	for _, t := range qr.Rows {
+		databases = append(databases, t[0].String())
+	}
+	return databases
 }
 
 // Dumper used to start the dumper worker.
@@ -165,34 +176,46 @@ func Dumper(log *xlog.Log, args *Args) {
 	writeMetaData(args)
 
 	// database.
+	var wg sync.WaitGroup
 	conn := pool.Get()
-	dumpDatabaseSchema(log, conn, args)
+	var databases []string
+	t := time.Now()
+	if args.Database != "" {
+		databases = strings.Split(args.Database, ",")
+	} else {
+		databases = allDatabases(log, conn)
+	}
+	for _, database := range databases {
+		dumpDatabaseSchema(log, conn, args, database)
+	}
 
 	// tables.
-	var wg sync.WaitGroup
-	var tables []string
-	t := time.Now()
-	if args.Table != "" {
-		tables = strings.Split(args.Table, ",")
-	} else {
-		tables = allTables(log, conn, args)
+	tables := make([][]string, len(databases))
+	for i, database := range databases {
+		if args.Table != "" {
+			tables[i] = strings.Split(args.Table, ",")
+		} else {
+			tables[i] = allTables(log, conn, database)
+		}
 	}
 	pool.Put(conn)
 
-	for _, table := range tables {
-		conn := pool.Get()
-		dumpTableSchema(log, conn, args, table)
+	for i, database := range databases {
+		for _, table := range tables[i] {
+			conn := pool.Get()
+			dumpTableSchema(log, conn, args, database, table)
 
-		wg.Add(1)
-		go func(conn *Connection, table string) {
-			defer func() {
-				wg.Done()
-				pool.Put(conn)
-			}()
-			log.Info("dumping.table[%s.%s].datas.thread[%d]...", args.Database, table, conn.ID)
-			dumpTable(log, conn, args, table)
-			log.Info("dumping.table[%s.%s].datas.thread[%d].done...", args.Database, table, conn.ID)
-		}(conn, table)
+			wg.Add(1)
+			go func(conn *Connection, database string, table string) {
+				defer func() {
+					wg.Done()
+					pool.Put(conn)
+				}()
+				log.Info("dumping.table[%s.%s].datas.thread[%d]...", database, table, conn.ID)
+				dumpTable(log, conn, args, database, table)
+				log.Info("dumping.table[%s.%s].datas.thread[%d].done...", database, table, conn.ID)
+			}(conn, database, table)
+		}
 	}
 
 	tick := time.NewTicker(time.Millisecond * time.Duration(args.IntervalMs))
