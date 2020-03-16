@@ -156,7 +156,7 @@ func Streamer(log *xlog.Log, args *Args) {
 	if args.Table != "" {
 		tables = strings.Split(args.Table, ",")
 	} else {
-		tables = allTables(log, from, args)
+		tables = allTables(log, from, args.Database)
 	}
 	fromPool.Put(from)
 	toPool.Put(to)

@@ -28,7 +28,7 @@ func TestLoader(t *testing.T) {
 
 	// fakedbs.
 	{
-		fakedbs.AddQuery("create database if not exists `test`", &sqltypes.Result{})
+		fakedbs.AddQueryPattern("create database if not exists `test.?`", &sqltypes.Result{})
 		fakedbs.AddQuery("create table `t1-05-11` (`a` int(11) default null,`b` varchar(100) default null) engine=innodb", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("use .*", &sqltypes.Result{})
 		fakedbs.AddQueryPattern("insert into .*", &sqltypes.Result{})

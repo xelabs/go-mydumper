@@ -86,7 +86,7 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 		tbl := strings.Split(name, ".")[1]
 		name = fmt.Sprintf("`%v`.`%v`", db, tbl)
 
-		log.Info("working.table[%s]", name)
+		log.Info("working.table[%s.%s]", db, tbl)
 
 		err := conn.Execute(fmt.Sprintf("USE `%s`", db))
 		AssertNil(err)
@@ -101,7 +101,7 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 		for _, query := range querys {
 			if !strings.HasPrefix(query, "/*") && query != "" {
 				if overwrite {
-					log.Info("drop(overwrite.is.true).table[%s]", name)
+					log.Info("drop(overwrite.is.true).table[%s.%s]", db, tbl)
 					dropQuery := fmt.Sprintf("DROP TABLE IF EXISTS %s", name)
 					err = conn.Execute(dropQuery)
 					AssertNil(err)
@@ -110,7 +110,7 @@ func restoreTableSchema(log *xlog.Log, overwrite bool, tables []string, conn *Co
 				AssertNil(err)
 			}
 		}
-		log.Info("restoring.schema[%s]", name)
+		log.Info("restoring.schema[%s.%s]", db, tbl)
 	}
 }
 
@@ -126,7 +126,7 @@ func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 		part = splits[2]
 	}
 
-	log.Info("restoring.tables[%s].parts[%s].thread[%d]", tbl, part, conn.ID)
+	log.Info("restoring.tables[%s.%s].parts[%s].thread[%d]", db, tbl, part, conn.ID)
 	err := conn.Execute(fmt.Sprintf("USE `%s`", db))
 	AssertNil(err)
 
@@ -144,7 +144,7 @@ func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 			AssertNil(err)
 		}
 	}
-	log.Info("restoring.tables[%s].parts[%s].thread[%d].done...", tbl, part, conn.ID)
+	log.Info("restoring.tables[%s.%s].parts[%s].thread[%d].done...", db, tbl, part, conn.ID)
 	return bytes
 }
 
