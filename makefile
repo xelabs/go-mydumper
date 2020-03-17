@@ -18,7 +18,6 @@ build:
 	@echo "--> Building..."
 	go build -v -o bin/mydumper src/cmd/mydumper.go src/cmd/config.go
 	go build -v -o bin/myloader src/cmd/myloader.go
-	go build -v -o bin/mystreamer src/cmd/mystreamer.go
 	@chmod 755 bin/*
 
 clean:

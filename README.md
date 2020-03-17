@@ -16,7 +16,6 @@ $cd go-mydumper
 $make build
 $./bin/mydumper   -h
 $./bin/myloader   -h
-$./bin/mystreamer -h
 ```
 
 ## Test
@@ -119,67 +118,6 @@ $./bin/myloader -h 192.168.0.2 -P 3306 -u mock -p mock -d sbtest.sql
  2017/10/25 13:05:52.602444 loader.go:131:        [INFO]        restoring.tables[benchyou0].parts[00019].thread[8].done...
  2017/10/25 13:05:52.602573 loader.go:187:        [INFO]        restoring.all.done.cost[95.09sec].allbytes[5120.00MB].rate[53.85MB/s]
 ```
-
-### mystreamer
-
-Streaming mode, dumps datas from upstream to downstream in parallel instead of dumping to the out directory.
-```
-$./bin/mystreamer
-Usage: ./bin/mystreamer -h [HOST] -P [PORT] -u [USER] -p [PASSWORD] -db [DATABASE] -2h [DOWNSTREAM-HOST] -2P [DOWNSTREAM-PORT] -2u [DOWNSTREAM-USER] -2p [DOWNSTREAM-PASSWORD] [-2db DOWNSTREAM-DATABASE] [-o]
-  -2P int
-    	Downstream TCP/IP port to connect to (default 3306)
-  -2db string
-    	Downstream database, default is same as upstream db
-  -2h string
-    	The downstream host to connect to
-  -2p string
-    	Downstream user password
-  -2u string
-    	Downstream username with privileges to run the streamer
-  -P int
-    	Upstream TCP/IP port to connect to (default 3306)
-  -db string
-    	Database to stream
-  -h string
-    	The upstream host to connect to
-  -o	Drop tables if they already exist
-  -p string
-    	Upstream user password
-  -s int
-    	Attempted size of INSERT statement in bytes (default 1000000)
-  -t int
-    	Number of threads to use (default 16)
-  -table string
-    	Table to stream
-  -u string
-    	Upstream username with privileges to run the streamer
-
-Examples:
-$./bin/mystreamer -h 192.168.0.2 -P 3306 -u mock -p mock -2h 192.168.0.3 -2P 3306 -2u mock -2p mock -db sbtest
- 2017/11/17 23:52:46.424107 streamer.go:30:       [INFO]        streaming.database[sbtest].schema...
- 2017/11/17 23:52:46.458807 streamer.go:50:       [INFO]        streaming.table[sbtest.benchyou0].schema...
- 2017/11/17 23:52:46.458892 streamer.go:165:      [INFO]        streaming.table[sbtest.benchyou0].datas.thread[1]...
- 2017/11/17 23:52:46.509911 streamer.go:50:       [INFO]        streaming.table[sbtest.benchyou1].schema...
- 2017/11/17 23:52:46.510008 streamer.go:165:      [INFO]        streaming.table[sbtest.benchyou1].datas.thread[2]...
- 2017/11/17 23:52:46.557443 streamer.go:50:       [INFO]        streaming.table[sbtest.benchyou2].schema...
- 2017/11/17 23:52:46.557499 streamer.go:165:      [INFO]        streaming.table[sbtest.benchyou2].datas.thread[3]...
- 2017/11/17 23:52:46.608464 streamer.go:50:       [INFO]        streaming.table[sbtest.benchyou3].schema...
- 2017/11/17 23:52:46.608526 streamer.go:165:      [INFO]        streaming.table[sbtest.benchyou3].datas.thread[4]...
-
- ...
- [stripped]
- ...
-
- 2017/11/17 23:52:53.056923 streamer.go:167:      [INFO]        streaming.table[sbtest.benchyou4].datas.thread[5].done...
- 2017/11/17 23:52:53.319846 streamer.go:121:      [INFO]        streaming.table[sbtest.benchyou5].done.allrows[134490].allbytes[28MB].thread[6]...
- 2017/11/17 23:52:53.319881 streamer.go:167:      [INFO]        streaming.table[sbtest.benchyou5].datas.thread[6].done...
- 2017/11/17 23:52:53.338505 streamer.go:121:      [INFO]        streaming.table[sbtest.benchyou6].done.allrows[134035].allbytes[28MB].thread[7]...
- 2017/11/17 23:52:53.338553 streamer.go:167:      [INFO]        streaming.table[sbtest.benchyou6].datas.thread[7].done...
- 2017/11/17 23:52:53.465916 streamer.go:121:      [INFO]        streaming.table[sbtest.benchyou7].done.allrows[133240].allbytes[28MB].thread[8]...
- 2017/11/17 23:52:53.465958 streamer.go:167:      [INFO]        streaming.table[sbtest.benchyou7].datas.thread[8].done...
- 2017/11/17 23:52:53.465999 streamer.go:185:      [INFO]        streaming.all.done.cost[7.04sec].allrows[1070285].allbytes[240555976].rate[32.52MB/s]
-```
-
 
 ## License
 
