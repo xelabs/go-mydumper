@@ -11,6 +11,7 @@ package common
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -166,6 +167,19 @@ func allDatabases(log *xlog.Log, conn *Connection) []string {
 	return databases
 }
 
+func filterDatabases(log *xlog.Log, conn *Connection, filter *regexp.Regexp, invert bool) []string {
+	qr, err := conn.Fetch("SHOW DATABASES")
+	AssertNil(err)
+
+	databases := make([]string, 0, 128)
+	for _, t := range qr.Rows {
+		if (!invert && filter.MatchString(t[0].String())) || (invert && !filter.MatchString(t[0].String())) {
+			databases = append(databases, t[0].String())
+		}
+	}
+	return databases
+}
+
 // Dumper used to start the dumper worker.
 func Dumper(log *xlog.Log, args *Args) {
 	pool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password, args.SessionVars)
@@ -180,10 +194,15 @@ func Dumper(log *xlog.Log, args *Args) {
 	conn := pool.Get()
 	var databases []string
 	t := time.Now()
-	if args.Database != "" {
-		databases = strings.Split(args.Database, ",")
+	if args.DatabaseRegexp != "" {
+		r := regexp.MustCompile(args.DatabaseRegexp)
+		databases = filterDatabases(log, conn, r, args.DatabaseInvertRegexp)
 	} else {
-		databases = allDatabases(log, conn)
+		if args.Database != "" {
+			databases = strings.Split(args.Database, ",")
+		} else {
+			databases = allDatabases(log, conn)
+		}
 	}
 	for _, database := range databases {
 		dumpDatabaseSchema(log, conn, args, database)

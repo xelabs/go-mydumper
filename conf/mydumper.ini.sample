@@ -17,6 +17,13 @@ chunksize = 128
 # vars= "xx=xx;xx=xx;"
 vars= ""
 
+# Use this to use regexp to control what databases to export. These are optional
+[database]
+# regexp = ^(mysql|sys|information_schema|performance_schema)$
+# As the used regexp lib does not allow for lookarounds, you may use this to invert the whole regexp
+# This option should be refactored as soon as a GPLv3 compliant go-pcre lib is found
+# invert_regexp = on
+
 # Use this to restrict exported data. These are optional
 [where]
 # sample_table1 = created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
