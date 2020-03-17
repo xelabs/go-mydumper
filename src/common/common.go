@@ -19,26 +19,28 @@ import (
 
 // Args tuple.
 type Args struct {
-	User            string
-	Password        string
-	Address         string
-	ToUser          string
-	ToPassword      string
-	ToAddress       string
-	ToDatabase      string
-	ToEngine        string
-	Database        string
-	Table           string
-	Outdir          string
-	SessionVars     string
-	Threads         int
-	ChunksizeInMB   int
-	StmtSize        int
-	Allbytes        uint64
-	Allrows         uint64
-	OverwriteTables bool
-	Wheres          map[string]string
-	Selects         map[string]map[string]string
+	User                 string
+	Password             string
+	Address              string
+	ToUser               string
+	ToPassword           string
+	ToAddress            string
+	ToDatabase           string
+	ToEngine             string
+	Database             string
+	DatabaseRegexp       string
+	DatabaseInvertRegexp bool
+	Table                string
+	Outdir               string
+	SessionVars          string
+	Threads              int
+	ChunksizeInMB        int
+	StmtSize             int
+	Allbytes             uint64
+	Allrows              uint64
+	OverwriteTables      bool
+	Wheres               map[string]string
+	Selects              map[string]map[string]string
 
 	// Interval in millisecond.
 	IntervalMs int

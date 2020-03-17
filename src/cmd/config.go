@@ -84,10 +84,18 @@ func parseDumperConfig(file string) (*common.Args, error) {
 		}
 	}
 
+	database_regexp, _ := cfg.GetString("database", "regexp")
+	database_invert_regexp, err := cfg.GetBool("database", "invert_regexp")
+	if err != nil {
+		database_invert_regexp = false
+	}
+
 	args.Address = fmt.Sprintf("%s:%d", host, port)
 	args.User = user
 	args.Password = password
 	args.Database = database
+	args.DatabaseRegexp = database_regexp
+	args.DatabaseInvertRegexp = database_invert_regexp
 	args.Table = table
 	args.Outdir = outdir
 	args.ChunksizeInMB = chunksizemb
