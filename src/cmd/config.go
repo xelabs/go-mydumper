@@ -90,6 +90,27 @@ func parseDumperConfig(file string) (*common.Args, error) {
 		database_invert_regexp = false
 	}
 
+	var filters []string
+	if filters, err = cfg.GetOptions("filter"); err != nil {
+		return nil, err
+	}
+	for _, tblcol := range filters {
+		var table, column string
+		split := strings.Split(tblcol, ".")
+		table = split[0]
+		column = split[1]
+
+		if args.Filters == nil {
+			args.Filters = make(map[string]map[string]string)
+		}
+		if args.Filters[table] == nil {
+			args.Filters[table] = make(map[string]string, 0)
+		}
+		if args.Filters[table][column], err = cfg.GetString("filter", tblcol); err != nil {
+			return nil, err
+		}
+	}
+
 	args.Address = fmt.Sprintf("%s:%d", host, port)
 	args.User = user
 	args.Password = password

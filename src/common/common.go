@@ -41,6 +41,7 @@ type Args struct {
 	OverwriteTables      bool
 	Wheres               map[string]string
 	Selects              map[string]map[string]string
+	Filters              map[string]map[string]string
 
 	// Interval in millisecond.
 	IntervalMs int

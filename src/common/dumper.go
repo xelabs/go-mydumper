@@ -59,6 +59,11 @@ func dumpTable(log *xlog.Log, conn *Connection, args *Args, database string, tab
 
 		flds := cursor.Fields()
 		for _, fld := range flds {
+			log.Debug("dump -- %#v, %s, %s", args.Filters, table, fld.Name)
+			if _, ok := args.Filters[table][fld.Name]; ok {
+				continue
+			}
+
 			fields = append(fields, fmt.Sprintf("`%s`", fld.Name))
 			replacement, ok := args.Selects[table][fld.Name]
 			if ok {
