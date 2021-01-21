@@ -14,13 +14,41 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xelabs/go-mydumper/common"
-
 	ini "gopkg.in/ini.v1"
 )
 
-func ParseDumperConfig(file string) (*common.Args, error) {
-	args := &common.Args{
+// Config tuple.
+type Config struct {
+	User                 string
+	Password             string
+	Address              string
+	ToUser               string
+	ToPassword           string
+	ToAddress            string
+	ToDatabase           string
+	ToEngine             string
+	Database             string
+	DatabaseRegexp       string
+	DatabaseInvertRegexp bool
+	Table                string
+	Outdir               string
+	SessionVars          string
+	Threads              int
+	ChunksizeInMB        int
+	StmtSize             int
+	Allbytes             uint64
+	Allrows              uint64
+	OverwriteTables      bool
+	Wheres               map[string]string
+	Selects              map[string]map[string]string
+	Filters              map[string]map[string]string
+
+	// Interval in millisecond.
+	IntervalMs int
+}
+
+func ParseDumperConfig(file string) (*Config, error) {
+	args := &Config{
 		Wheres: make(map[string]string),
 	}
 

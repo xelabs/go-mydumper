@@ -17,16 +17,17 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/xelabs/go-mydumper/config"
 	querypb "github.com/xelabs/go-mysqlstack/sqlparser/depends/query"
 	"github.com/xelabs/go-mysqlstack/xlog"
 )
 
-func writeMetaData(args *Args) {
+func writeMetaData(args *config.Config) {
 	file := fmt.Sprintf("%s/metadata", args.Outdir)
 	WriteFile(file, "")
 }
 
-func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *Args, database string) {
+func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *config.Config, database string) {
 	err := conn.Execute(fmt.Sprintf("USE `%s`", database))
 	AssertNil(err)
 
@@ -36,7 +37,7 @@ func dumpDatabaseSchema(log *xlog.Log, conn *Connection, args *Args, database st
 	log.Info("dumping.database[%s].schema...", database)
 }
 
-func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, database string, table string) {
+func dumpTableSchema(log *xlog.Log, conn *Connection, args *config.Config, database string, table string) {
 	qr, err := conn.Fetch(fmt.Sprintf("SHOW CREATE TABLE `%s`.`%s`", database, table))
 	AssertNil(err)
 	schema := qr.Rows[0][1].String() + ";\n"
@@ -46,7 +47,7 @@ func dumpTableSchema(log *xlog.Log, conn *Connection, args *Args, database strin
 	log.Info("dumping.table[%s.%s].schema...", database, table)
 }
 
-func dumpTable(log *xlog.Log, conn *Connection, args *Args, database string, table string) {
+func dumpTable(log *xlog.Log, conn *Connection, args *config.Config, database string, table string) {
 	var allBytes uint64
 	var allRows uint64
 	var where string
@@ -186,7 +187,7 @@ func filterDatabases(log *xlog.Log, conn *Connection, filter *regexp.Regexp, inv
 }
 
 // Dumper used to start the dumper worker.
-func Dumper(log *xlog.Log, args *Args) {
+func Dumper(log *xlog.Log, args *config.Config) {
 	pool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password, args.SessionVars)
 	AssertNil(err)
 	defer pool.Close()

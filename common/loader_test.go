@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/xelabs/go-mydumper/config"
 	"github.com/xelabs/go-mysqlstack/driver"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/sqltypes"
 	"github.com/xelabs/go-mysqlstack/xlog"
@@ -36,7 +37,7 @@ func TestLoader(t *testing.T) {
 		fakedbs.AddQueryPattern("set foreign_key_checks=.*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		Outdir:          "/tmp/dumpertest",
 		User:            "mock",
 		Password:        "mock",

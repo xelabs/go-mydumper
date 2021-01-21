@@ -15,6 +15,7 @@ import (
 	"os"
 
 	"github.com/xelabs/go-mydumper/common"
+	"github.com/xelabs/go-mydumper/config"
 
 	"github.com/xelabs/go-mysqlstack/xlog"
 )
@@ -52,7 +53,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	args := &common.Args{
+	args := &config.Config{
 		User:            flagUser,
 		Password:        flagPasswd,
 		Address:         fmt.Sprintf("%s:%d", flagHost, flagPort),

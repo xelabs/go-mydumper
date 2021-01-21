@@ -1,23 +1,11 @@
-export GOPATH := $(shell pwd)
 export PATH := $(GOPATH)/bin:$(PATH)
 
-all: get build test
-
-get:
-	@echo "--> go get..."
-	go get github.com/xelabs/go-mysqlstack/driver
-	go get github.com/dlintw/goconf
-
-gettest:
-	@echo "--> go get..."
-	go get github.com/stretchr/testify/assert
-	go get github.com/pierrre/gotestcover
+all: build test
 
 build:
-	@$(MAKE) get
 	@echo "--> Building..."
-	go build -v -o bin/mydumper src/cmd/mydumper.go src/cmd/config.go
-	go build -v -o bin/myloader src/cmd/myloader.go
+	go build -v -o bin/mydumper cmd/mydumper
+	go build -v -o bin/myloader cmd/myloader
 	@chmod 755 bin/*
 
 clean:
@@ -26,12 +14,10 @@ clean:
 	@rm -f bin/*
 
 fmt:
-	go fmt ./...
+	gofumpt -w -s -d .
 	go vet ./...
 
 test:
-	@$(MAKE) get
-	@$(MAKE) gettest
 	@echo "--> Testing..."
 	@$(MAKE) testcommon
 
@@ -40,6 +26,7 @@ testcommon:
 
 # code coverage
 COVPKGS =	common
+
 coverage:
 	@$(MAKE) get
 	@$(MAKE) gettest
@@ -47,4 +34,5 @@ coverage:
 	src/github.com/pierrre/gotestcover/*.go;
 	bin/gotestcover -coverprofile=coverage.out -v $(COVPKGS)
 	go tool cover -html=coverage.out
-.PHONY: get build clean fmt test coverage
+
+.PHONY: all get build clean fmt test coverage

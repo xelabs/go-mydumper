@@ -19,6 +19,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/xelabs/go-mydumper/config"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/common"
 	"github.com/xelabs/go-mysqlstack/xlog"
 )
@@ -149,7 +150,7 @@ func restoreTable(log *xlog.Log, table string, conn *Connection) int {
 }
 
 // Loader used to start the loader worker.
-func Loader(log *xlog.Log, args *Args) {
+func Loader(log *xlog.Log, args *config.Config) {
 	pool, err := NewPool(log, args.Threads, args.Address, args.User, args.Password, args.SessionVars)
 	AssertNil(err)
 	defer pool.Close()

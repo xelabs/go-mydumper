@@ -16,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/xelabs/go-mydumper/config"
 	"github.com/xelabs/go-mysqlstack/driver"
 	querypb "github.com/xelabs/go-mysqlstack/sqlparser/depends/query"
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/sqltypes"
@@ -57,7 +58,8 @@ func TestDumper(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -85,9 +87,11 @@ func TestDumper(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -103,7 +107,8 @@ func TestDumper(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -114,7 +119,7 @@ func TestDumper(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		Database:      "test",
 		Outdir:        "/tmp/dumpertest",
 		User:          "mock",
@@ -129,7 +134,7 @@ func TestDumper(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
@@ -178,7 +183,8 @@ func TestDumperAll(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -199,7 +205,8 @@ func TestDumperAll(t *testing.T) {
 				Type: querypb.Type_INT32,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -222,9 +229,11 @@ func TestDumperAll(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -240,7 +249,8 @@ func TestDumperAll(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	databasesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -256,7 +266,8 @@ func TestDumperAll(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("test2")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -269,7 +280,7 @@ func TestDumperAll(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		Outdir:        "/tmp/dumpertest",
 		User:          "mock",
 		Password:      "mock",
@@ -283,7 +294,7 @@ func TestDumperAll(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
@@ -336,7 +347,8 @@ func TestDumperMultiple(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -357,7 +369,8 @@ func TestDumperMultiple(t *testing.T) {
 				Type: querypb.Type_INT32,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -380,9 +393,11 @@ func TestDumperMultiple(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -398,7 +413,8 @@ func TestDumperMultiple(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	databasesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -414,7 +430,8 @@ func TestDumperMultiple(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("test2")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -427,7 +444,7 @@ func TestDumperMultiple(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		Database:      "test1,test2",
 		Outdir:        "/tmp/dumpertest",
 		User:          "mock",
@@ -442,7 +459,7 @@ func TestDumperMultiple(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
@@ -495,7 +512,8 @@ func TestDumperSimpleRegexp(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -516,7 +534,8 @@ func TestDumperSimpleRegexp(t *testing.T) {
 				Type: querypb.Type_INT32,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -539,9 +558,11 @@ func TestDumperSimpleRegexp(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -557,7 +578,8 @@ func TestDumperSimpleRegexp(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	databasesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -582,7 +604,8 @@ func TestDumperSimpleRegexp(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("test5")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -595,7 +618,7 @@ func TestDumperSimpleRegexp(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		DatabaseRegexp: "(test1|test2)",
 		Outdir:         "/tmp/dumpertest",
 		User:           "mock",
@@ -610,7 +633,7 @@ func TestDumperSimpleRegexp(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
@@ -663,7 +686,8 @@ func TestDumperComplexRegexp(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -684,7 +708,8 @@ func TestDumperComplexRegexp(t *testing.T) {
 				Type: querypb.Type_INT32,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -707,9 +732,11 @@ func TestDumperComplexRegexp(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -725,7 +752,8 @@ func TestDumperComplexRegexp(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	databasesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -750,7 +778,8 @@ func TestDumperComplexRegexp(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("test5")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -763,7 +792,7 @@ func TestDumperComplexRegexp(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		DatabaseRegexp: "^[ets]+?[0-2]$",
 		Outdir:         "/tmp/dumpertest",
 		User:           "mock",
@@ -778,7 +807,7 @@ func TestDumperComplexRegexp(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
@@ -831,7 +860,8 @@ func TestDumperInvertMatch(t *testing.T) {
 				Type: querypb.Type_DATETIME,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -852,7 +882,8 @@ func TestDumperInvertMatch(t *testing.T) {
 				Type: querypb.Type_INT32,
 			},
 		},
-		Rows: make([][]sqltypes.Value, 0, 256)}
+		Rows: make([][]sqltypes.Value, 0, 256),
+	}
 
 	for i := 0; i < 201710; i++ {
 		row := []sqltypes.Value{
@@ -875,9 +906,11 @@ func TestDumperInvertMatch(t *testing.T) {
 		Rows: [][]sqltypes.Value{
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t1")),
-				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
+				sqltypes.MakeTrusted(querypb.Type_VARCHAR,
+					[]byte("CREATE TABLE `t1-05-11` (`a` int(11) DEFAULT NULL,`b` varchar(100) DEFAULT NULL) ENGINE=InnoDB")),
 			},
-		}}
+		},
+	}
 
 	tablesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -893,7 +926,8 @@ func TestDumperInvertMatch(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("t2-05-11")),
 			},
-		}}
+		},
+	}
 
 	databasesResult := &sqltypes.Result{
 		Fields: []*querypb.Field{
@@ -921,7 +955,8 @@ func TestDumperInvertMatch(t *testing.T) {
 			{
 				sqltypes.MakeTrusted(querypb.Type_VARCHAR, []byte("performance_schema")),
 			},
-		}}
+		},
+	}
 
 	// fakedbs.
 	{
@@ -934,7 +969,7 @@ func TestDumperInvertMatch(t *testing.T) {
 		fakedbs.AddQueryPattern("set .*", &sqltypes.Result{})
 	}
 
-	args := &Args{
+	args := &config.Config{
 		DatabaseRegexp:       "^(mysql|sys|information_schema|performance_schema)$",
 		DatabaseInvertRegexp: true,
 		Outdir:               "/tmp/dumpertest",
@@ -950,7 +985,7 @@ func TestDumperInvertMatch(t *testing.T) {
 
 	os.RemoveAll(args.Outdir)
 	if _, err := os.Stat(args.Outdir); os.IsNotExist(err) {
-		x := os.MkdirAll(args.Outdir, 0777)
+		x := os.MkdirAll(args.Outdir, 0o777)
 		AssertNil(x)
 	}
 
