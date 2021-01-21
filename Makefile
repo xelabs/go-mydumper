@@ -28,10 +28,8 @@ testcommon:
 COVPKGS =	./common
 
 coverage:
-	sh -c "echo 'mode: atomic' > coverage.txt" &&
-	go list ./... | xargs -n1 -I{} sh -c \
-		'go test -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt' && \
-		rm coverage.tmp
+	echo 'mode: atomic' > coverage.txt
+	go test -covermode=atomic -coverprofile=coverage.out $(COVPKGS)
 	go tool cover -html=coverage.out
 
 .PHONY: all get build clean fmt test coverage
