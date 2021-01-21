@@ -14,7 +14,7 @@ clean:
 	@rm -f bin/*
 
 fmt:
-	gofumpt -w -s -d .
+	go fmt ./...
 	go vet ./...
 
 test:
