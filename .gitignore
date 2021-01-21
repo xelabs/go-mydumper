@@ -1,6 +1,11 @@
 bin/*
 pkg/*
 src/github.com/
+/.idea
+/myloader
+/mydumper
+/*.sql
+/dumper-sql
 
 tags
 coverage.out

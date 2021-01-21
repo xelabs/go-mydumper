@@ -10,10 +10,11 @@
 package main
 
 import (
-	"common"
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/xelabs/go-mydumper/common"
 
 	"github.com/xelabs/go-mysqlstack/xlog"
 )
@@ -26,7 +27,7 @@ var (
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
 
-func init() {
+func initFlags() {
 	flag.StringVar(&flagUser, "u", "", "Username with privileges to run the loader")
 	flag.StringVar(&flagPasswd, "p", "", "User password")
 	flag.StringVar(&flagHost, "h", "", "The host to connect to")
@@ -42,6 +43,7 @@ func usage() {
 }
 
 func main() {
+	initFlags()
 	flag.Usage = func() { usage() }
 	flag.Parse()
 
