@@ -26,7 +26,7 @@ var (
 	log = xlog.NewStdLog(xlog.Level(xlog.INFO))
 )
 
-func init() {
+func initFlags() {
 	flag.StringVar(&flagConfig, "c", "", "config file")
 }
 
@@ -36,6 +36,7 @@ func usage() {
 }
 
 func main() {
+	initFlags()
 	flag.Usage = func() { usage() }
 	flag.Parse()
 
