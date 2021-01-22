@@ -17,43 +17,13 @@ import (
 	"github.com/xelabs/go-mysqlstack/sqlparser/depends/common"
 )
 
-// Args tuple.
-type Args struct {
-	User                 string
-	Password             string
-	Address              string
-	ToUser               string
-	ToPassword           string
-	ToAddress            string
-	ToDatabase           string
-	ToEngine             string
-	Database             string
-	DatabaseRegexp       string
-	DatabaseInvertRegexp bool
-	Table                string
-	Outdir               string
-	SessionVars          string
-	Threads              int
-	ChunksizeInMB        int
-	StmtSize             int
-	Allbytes             uint64
-	Allrows              uint64
-	OverwriteTables      bool
-	Wheres               map[string]string
-	Selects              map[string]map[string]string
-	Filters              map[string]map[string]string
-
-	// Interval in millisecond.
-	IntervalMs int
-}
-
 // WriteFile used to write datas to file.
 func WriteFile(file string, data string) error {
 	flag := os.O_RDWR | os.O_TRUNC
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		flag |= os.O_CREATE
 	}
-	f, err := os.OpenFile(file, flag, 0644)
+	f, err := os.OpenFile(file, flag, 0o644)
 	if err != nil {
 		return err
 	}

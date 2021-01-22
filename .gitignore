@@ -1,6 +1,13 @@
 bin/*
 pkg/*
 src/github.com/
+/.idea
+/myloader
+/mydumper
+*.sql
+*.ini
+/dumper-sql
+/coverage.txt
 
 tags
 coverage.out

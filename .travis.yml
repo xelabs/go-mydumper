@@ -1,10 +1,10 @@
 language: go
+dist: focal
 sudo: required
 go:
-  - 1.10.x
+  - 1.15.x
 
 before_install:
-  - go get github.com/pierrre/gotestcover
   - go get github.com/stretchr/testify/assert
 
 script:
