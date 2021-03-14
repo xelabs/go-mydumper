@@ -34,9 +34,6 @@ vars= ""
 
 # Use this to override value returned from tables. These are optional
 [select]
-# user.salt = 'reset salt of all system users'
-# user.password = 'reset password of all system users'
-
 # customer.first_name = CONCAT('Bohu', id)
 # customer.last_name = 'Last'
 
