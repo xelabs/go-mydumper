@@ -23,7 +23,7 @@ func WriteFile(file string, data string) error {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		flag |= os.O_CREATE
 	}
-	f, err := os.OpenFile(file, flag, 0o644)
+	f, err := os.OpenFile(file, flag, 0644)
 	if err != nil {
 		return err
 	}
